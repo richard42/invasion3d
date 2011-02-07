@@ -1,0 +1,11 @@
+Legal Stuff:
+
+This software (Invasion3D OpenGL game Version 1.0) is copyrighted software. I give you (the LICENSEE) permission to freely copy and distribute this software in any manner to anyone (the RECIPIENTS) as long as the following two conditions are met:
+
+A) The LICENSEE may not charge the RECIPIENTS more than US$1.00 over and above the media and duplication costs for copies of this software.
+
+B) Any copies made by the LICENSEE must retain all of the original files and the original file structure from the ZIP file or Setup.exe distributed by Fascination Software. No files may be added, removed, or modified from this distribution.
+
+Fascination Software, and Richard Goedeken, are not in any way liable for any damages incurred by the use of this software.  The user assumes full responsibility for the use of this software, and no warranties of any kind given for this software.
+
+Invasion3D uses the Simple DirectMedia Layer library, and it is included under the terms of the LGPL license. A copy of the LGPL license is included with the Invasion3D files.

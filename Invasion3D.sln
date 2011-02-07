@@ -1,0 +1,23 @@
+Microsoft Visual Studio Solution File, Format Version 8.00
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "Invasion3D", "Invasion3D.vcproj", "{15433530-B879-4621-B2D7-2B584C4FA47D}"
+	ProjectSection(ProjectDependencies) = postProject
+	EndProjectSection
+EndProject
+Global
+	GlobalSection(SolutionConfiguration) = preSolution
+		Debug = Debug
+		Release = Release
+	EndGlobalSection
+	GlobalSection(ProjectConfiguration) = postSolution
+		{15433530-B879-4621-B2D7-2B584C4FA47D}.Debug.ActiveCfg = Debug|Win32
+		{15433530-B879-4621-B2D7-2B584C4FA47D}.Debug.Build.0 = Debug|Win32
+		{15433530-B879-4621-B2D7-2B584C4FA47D}.Release.ActiveCfg = Release|Win32
+		{15433530-B879-4621-B2D7-2B584C4FA47D}.Release.Build.0 = Release|Win32
+		{15433530-B879-4621-B2D7-2B584C4FA47D}.Debug.ActiveCfg = Debug|Win32
+		{15433530-B879-4621-B2D7-2B584C4FA47D}.Release.ActiveCfg = Release|Win32
+	EndGlobalSection
+	GlobalSection(ExtensibilityGlobals) = postSolution
+	EndGlobalSection
+	GlobalSection(ExtensibilityAddIns) = postSolution
+	EndGlobalSection
+EndGlobal
