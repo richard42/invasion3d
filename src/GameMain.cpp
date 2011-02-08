@@ -37,6 +37,7 @@
 #include <string.h>
 #include <memory.h>
 #include <math.h>
+#include <time.h>
 
 #include "GameMain.h"
 #include "GameLogic.h"
@@ -297,45 +298,12 @@ void CGameMain::DrawFrame(void)
 
 void QueryPerformanceCounter(__int64 *liValue)
 {
-  unsigned int uiHigh, uiLow;
-  __asm__ volatile (" rdtsc;         "
-                    " movl %%eax,%0; "
-                    " movl %%edx,%1; "
-                    : "=m" (uiLow), "=m" (uiHigh)
-                    :
-                    : "%eax", "%edx"
-                    );
-
-  *liValue = ((__int64) uiHigh << 32) | uiLow;
+  *liValue = clock();
 }
 
 void QueryPerformanceFrequency(__int64 *liFreq)
 {
-  // set value to 0
-  *liFreq = 0;
-
-  char chInfo[1024];
-  chInfo[0] = 0;
-  chInfo[1023] = 0;
-
-  FILE *fIn = fopen("/proc/cpuinfo", "r");
-  if (!fIn) return;
-  if (fread(chInfo, 1, 1023, fIn) < 10) return;
-  fclose(fIn);
-
-  double dFreq = 0.0f;
-  char *pch = strstr(chInfo, "cpu");
-  if (pch)
-    {
-    pch = strstr(pch, "MHz");
-    if (pch)
-      {
-      pch = strstr(pch, ":");
-      if (pch) dFreq = atof(pch + 1);
-      }
-    }
-
-  *liFreq = (__int64) (dFreq * 1000000);
+  *liFreq = CLOCKS_PER_SEC;
 };
 
 void *_aligned_malloc(size_t sz, size_t alignment)
