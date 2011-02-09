@@ -160,18 +160,13 @@ void CGameMain::MainLoop(void)
   unsigned int uiFrameTime   = 1;
   unsigned int uiTimeStart   = SDL_GetTicks();
 
-  // get CPU frequency
-  __int64 liFreq;
-  QueryPerformanceFrequency((LARGE_INTEGER *) &liFreq);
-
   // get start time
-  __int64 liNextFrame;
-  QueryPerformanceCounter((LARGE_INTEGER *) &liNextFrame);
+  clock_t liNextFrame = clock();
 
   // main loop for the Invasion3D game
   while (m_eGameMode != E_QUIT)
     {
-    __int64 liFrameTimeStart = liNextFrame;
+    clock_t liFrameTimeStart = liNextFrame;
     // calculate time expansion factor
     float fTimeFactor = 1.0f;
     if (m_uiBulletTimeStart > 0)
@@ -203,8 +198,8 @@ void CGameMain::MainLoop(void)
     do 
       {
       //if (uiFrameTime < 5) SDL_Delay(1);
-      QueryPerformanceCounter((LARGE_INTEGER *) &liNextFrame);
-      uiFrameTime = (unsigned int) ((liNextFrame - liFrameTimeStart) * 1000 / liFreq);
+      liNextFrame = clock();
+      uiFrameTime = (unsigned int) ((float) (liNextFrame - liFrameTimeStart) * 1000.0f / CLOCKS_PER_SEC);
       } while(uiFrameTime < 5);  // cap max FPS at 200
     // set frame time in array for FPS display
 #ifdef _DEBUG
@@ -299,16 +294,6 @@ void CGameMain::DrawFrame(void)
 // Linux compatibility functions
 
 #if !defined(WIN32)
-
-void QueryPerformanceCounter(__int64 *liValue)
-{
-  *liValue = clock();
-}
-
-void QueryPerformanceFrequency(__int64 *liFreq)
-{
-  *liFreq = CLOCKS_PER_SEC;
-};
 
 void *_aligned_malloc(size_t sz, size_t alignment)
 {

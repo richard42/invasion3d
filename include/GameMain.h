@@ -49,10 +49,6 @@ extern SKeyConv g_asKeys[118];
 
 // Linux compatibility functions
 #if !defined(WIN32)
-  typedef long long int __int64;
-  typedef long long int LARGE_INTEGER;
-  void QueryPerformanceCounter(__int64 *liValue);
-  void QueryPerformanceFrequency(__int64 *liFreq);
   void *_aligned_malloc(size_t sz, size_t alignment);
   void _aligned_free(void *pvData);
 #endif
