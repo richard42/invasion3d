@@ -53,6 +53,7 @@
 #include "TextGL.h"
 #include "Textures.h"
 #include "Package.h"
+#include "Version.h"
 
 // static CGameMain class members
 bool CGameMain::m_bAlphaSupported = false;
@@ -76,6 +77,9 @@ int main(int argc, char *argv[])
     chPath[0] = 0;
   cTheApp.SetExePath(chPath);
 #endif
+
+  printf("Invasion3D v%s\n", INVASION3D_VERSION);
+  printf("Copyright (C) 2005,2011 Richard Goedeken\n");
 
   // initialize SDL and video mode
   if (!cTheApp.InitSDL())
