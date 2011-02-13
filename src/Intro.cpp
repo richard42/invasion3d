@@ -74,11 +74,11 @@ void CIntro::Draw(void) const
   glEnable(GL_DEPTH_TEST);
 
   // draw the text
-  if (uiTime > 6000 && uiTime < 15000)
+  if (uiTime > 2000 && uiTime < 6500)
     {
-    uiTime -= 6000;
-    unsigned int uiMsg = (uiTime / 3000);
-    uiTime = uiTime % 3000;
+    uiTime -= 2000;
+    unsigned int uiMsg = (uiTime / 1500);
+    uiTime = uiTime % 1500;
     float fOffsetZ = 0.0f;
     float fSize = 1.0f;
     if (uiTime < 500)
@@ -86,8 +86,8 @@ void CIntro::Draw(void) const
       fOffsetZ = 1600.0f - (float) uiTime * 3.2f;
       fSize = uiTime * 0.002f;
       }
-    else if (uiTime > 2000)
-      fOffsetZ = (2000 - (int) uiTime) * 3.2f;
+    else if (uiTime > 1000)
+      fOffsetZ = (1000 - (int) uiTime) * 3.2f;
     // setup text
     CTextGL cTitle;
     cTitle.SetAlpha(true);
@@ -116,54 +116,53 @@ void CIntro::Draw(void) const
         break;
       }
     // draw text
-    if (uiTime <= 2500) cTitle.Draw();
+    cTitle.Draw();
     }
 
-  if (uiTime < 15000) return;
-  uiTime -= 15000;
+  if (uiTime < 6500) return;
+  uiTime -= 6500;
 
   // draw invaders
-  if (uiTime < 4000)
+  if (uiTime > 0 && uiTime < 1000)
     {
-    unsigned int uiInv = (uiTime / 1000);
-    uiTime = uiTime % 1000;
-    float fOffsetZ = 1600.0f - (float) uiTime * 3.2f;
-    switch (uiInv)
-      {
-      case 0:
-        {
-        CInvader10 cInvader;
-        cInvader.SetPosition(-64.0f, -64.0f, fOffsetZ);
-        if ((uiTime & 128) != 0) cInvader.ToggleLegs(true);
-        cInvader.Draw();
-        break;
-        }
-      case 1:
-        {
-        CInvader20 cInvader;
-        cInvader.SetPosition(48.0f, -48.0f, fOffsetZ);
-        if ((uiTime & 128) != 0) cInvader.ToggleLegs(true);
-        cInvader.Draw();
-        break;
-        }
-      case 2:
-        {
-        CInvader30 cInvader;
-        cInvader.SetPosition(64.0f, 64.0f, fOffsetZ);
-        if ((uiTime & 128) != 0) cInvader.ToggleLegs(true);
-        cInvader.Draw();
-        break;
-        }
-      case 3:
-        {
-        CInvaderMystery cInvader;
-        cInvader.SetPosition(-32.0f, 32.0f, fOffsetZ);
-        cInvader.SetAxis(0.0f, 1.0f, 0.0f);
-        cInvader.SetRotation(uiTime * 0.36f);
-        cInvader.Draw();
-        break;
-        }
-      }
+    CInvader10 cInvader;
+    float fOffsetZ = 3000.0f - (float) uiTime * 5.0f;
+    cInvader.SetPosition(-64.0f, -64.0f, fOffsetZ);
+    if ((uiTime & 128) != 0) cInvader.ToggleLegs(true);
+    glPushMatrix();
+    cInvader.Draw();
+    glPopMatrix();
+    }
+  if (uiTime > 500 && uiTime < 1500)
+    {
+    CInvader20 cInvader;
+    float fOffsetZ = 3000.0f - (float) (uiTime - 500) * 5.0f;
+    cInvader.SetPosition(48.0f, -48.0f, fOffsetZ);
+    if ((uiTime & 128) != 0) cInvader.ToggleLegs(true);
+    glPushMatrix();
+    cInvader.Draw();
+    glPopMatrix();
+    }
+  if (uiTime > 1000 && uiTime < 2000)
+    {
+    CInvader30 cInvader;
+    float fOffsetZ = 3000.0f - (float) (uiTime - 1000) * 5.0f;
+    cInvader.SetPosition(64.0f, 64.0f, fOffsetZ);
+    if ((uiTime & 128) != 0) cInvader.ToggleLegs(true);
+    glPushMatrix();
+    cInvader.Draw();
+    glPopMatrix();
+    }
+  if (uiTime > 1500 && uiTime < 2500)
+    {
+    CInvaderMystery cInvader;
+    float fOffsetZ = 3000.0f - (float) (uiTime - 1500) * 5.0f;
+    cInvader.SetPosition(-32.0f, 32.0f, fOffsetZ);
+    cInvader.SetAxis(0.0f, 1.0f, 0.0f);
+    cInvader.SetRotation(uiTime * 0.36f);
+    glPushMatrix();
+    cInvader.Draw();
+    glPopMatrix();
     }
 
 }
@@ -200,9 +199,15 @@ void CIntro::ProcessEvents(void)
 {
   SDL_Event event;
 
-  // Grab all the events off the queue and toss them
+  // Grab all the events off the queue
   while (SDL_PollEvent(&event))
     {
+      // look for an escape key press
+      if (event.type == SDL_KEYDOWN && event.key.keysym.sym == SDLK_ESCAPE)
+        {
+        // switch to demo mode immediately
+        m_pGameMain->SetMode(E_DEMO);
+        }
     }
 }
 
@@ -237,7 +242,7 @@ void CIntro::ProcessState(unsigned int uiMillisec)
     }
 
   // switch to demo mode at the end
-  if (m_uiStateTime > 20000) m_pGameMain->SetMode(E_DEMO);
+  if (m_uiStateTime > 9000) m_pGameMain->SetMode(E_DEMO);
 }
 
 /////////////////////////////////////////////////////////////////////////////
