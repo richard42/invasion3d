@@ -181,7 +181,7 @@ void CDemo::Initialize(CGameMain *pGameMain, CSettings *pSettings)
   m_Text[0].SetFont(E_FONT_EUPHORIGENIC);
   m_Text[0].SetHeight(42.0f);
   m_Text[0].SetPosition(0.0f, -355.0f, -50.0f);
-  m_Text[0].SetText("Copyright (C) 2005 by Richard Goedeken");
+  m_Text[0].SetText("Copyright (C) 2005,2011 by Richard Goedeken");
 
   m_Text[1].SetFont(E_FONT_VECTROID);
   m_Text[1].SetHeight(70.0f);

@@ -263,15 +263,27 @@ void CGameMain::DrawFrame(void)
       break;
     case E_DEMO:
       {
-      // calculate viewing angle
-      float fAngle = 0.0f;
-      if (m_uiModeTime < 1000) fAngle = (1000 - (int) m_uiModeTime) * 0.000785398f;
       // setup the coordinate system
       glMatrixMode(GL_MODELVIEW);
       glLoadIdentity();
-      gluLookAt(0,100,-1600.0f, -1600.0f*sin(fAngle),50,-1600.0f*(1.0f-cos(fAngle)), 0,-1,0);
+      gluLookAt(0,100,-1600.0f, 0,50,0, 0,-1,0);
       // draw the demo screen
       m_pcDemo->Draw();
+      // fade from black
+      if (m_uiModeTime <= 1000)
+        {
+        glDisable(GL_LIGHTING);
+        glEnable(GL_BLEND);
+        glBlendFunc(GL_SRC_ALPHA,GL_ONE_MINUS_SRC_ALPHA);
+        glBegin(GL_QUADS);
+        glColor4f(0, 0, 0, (1000 - m_uiModeTime) / 1000.0f);
+        glVertex3f(-512.0f, -512.0f, -55.0f);
+        glVertex3f(-512.0f,  512.0f, -55.0f);
+        glVertex3f( 512.0f,  512.0f, -55.0f);
+        glVertex3f( 512.0f, -512.0f, -55.0f);
+        glEnd();
+        glEnable(GL_LIGHTING);
+        }
       break;
       }
     case E_GAMERUN:
