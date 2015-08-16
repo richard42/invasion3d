@@ -23,6 +23,6 @@
 #if !defined(VERSION_H)
 #define VERSION_H
 
-#define INVASION3D_VERSION "1.0.4-development"
+#define INVASION3D_VERSION "1.0.4a"
 
 #endif // !defined(VERSION_H)
