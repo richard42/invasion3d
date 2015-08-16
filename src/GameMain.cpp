@@ -333,7 +333,7 @@ bool CGameMain::InitSDL(void)
     int iFlags = 0;
 
     // First, initialize SDL
-    if (SDL_Init(SDL_INIT_VIDEO | SDL_INIT_JOYSTICK) < 0)
+    if (SDL_Init(SDL_INIT_VIDEO | SDL_INIT_AUDIO | SDL_INIT_JOYSTICK) < 0)
         {
         printf("Video initialization failed: %s\n", SDL_GetError());
         return false;

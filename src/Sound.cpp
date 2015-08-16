@@ -117,6 +117,7 @@ void CSound::DestroySound(void)
 CSound::CSound()
 {
   // set up desired audio specs
+  memset(&m_AudioSpec, 0, sizeof(m_AudioSpec));
   m_AudioSpec.freq     = 22050;
   m_AudioSpec.format   = AUDIO_S16LSB;
   m_AudioSpec.channels = 1;
@@ -140,6 +141,10 @@ CSound::CSound()
 
 CSound::~CSound()
 {
+  // disable the sound
+  SDL_PauseAudio(1);
+  
+  // shut down the SDL audio subsystem
   SDL_CloseAudio();
 }
 
@@ -185,8 +190,8 @@ void CSound::StopSoundClip(ESound eClipType)
     if (m_eClipType[ui] == eClipType)
       {
       // remove this sound from our lists
-      memcpy(m_eClipType + ui,    m_eClipType + ui + 1,    (m_uiActiveSounds - ui - 1) * sizeof(ESound));
-      memcpy(m_uiClipOffset + ui, m_uiClipOffset + ui + 1, (m_uiActiveSounds - ui - 1) * sizeof(unsigned int));
+      memmove(m_eClipType + ui,    m_eClipType + ui + 1,    (m_uiActiveSounds - ui - 1) * sizeof(ESound));
+      memmove(m_uiClipOffset + ui, m_uiClipOffset + ui + 1, (m_uiActiveSounds - ui - 1) * sizeof(unsigned int));
       m_uiActiveSounds--;
       break;
       }
@@ -256,8 +261,8 @@ void CSound::AudioCallback(void *pvUserData, Uint8 *pucBuffer, int iBufferBytes)
       else
         {
         // else remove this sound from our lists
-        memcpy(pSound->m_eClipType + ui,    pSound->m_eClipType + ui + 1,    (uiSounds - ui - 1) * sizeof(ESound));
-        memcpy(pSound->m_uiClipOffset + ui, pSound->m_uiClipOffset + ui + 1, (uiSounds - ui - 1) * sizeof(unsigned int));
+        memmove(pSound->m_eClipType + ui,    pSound->m_eClipType + ui + 1,    (uiSounds - ui - 1) * sizeof(ESound));
+        memmove(pSound->m_uiClipOffset + ui, pSound->m_uiClipOffset + ui + 1, (uiSounds - ui - 1) * sizeof(unsigned int));
         pSound->m_uiActiveSounds--;
         uiSounds--;
         ui--;

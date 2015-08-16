@@ -718,7 +718,7 @@ void CParticles::RemoveSparkle(unsigned int uiNumSparkle)
   free(m_asSparkles[uiNumSparkle].pfVelocity);
 
   // fill in the gap in our table
-  memcpy(&m_asSparkles[uiNumSparkle], &m_asSparkles[uiNumSparkle+1], (m_uiNumSparkles - uiNumSparkle - 1) * sizeof(SSparkles));
+  memmove(&m_asSparkles[uiNumSparkle], &m_asSparkles[uiNumSparkle+1], (m_uiNumSparkles - uiNumSparkle - 1) * sizeof(SSparkles));
   m_uiNumSparkles--;
 }
 
@@ -741,6 +741,6 @@ void CParticles::RemovePoly(unsigned int uiNumPoly)
   if (m_asPolys[uiNumPoly].pucTriRot) free(m_asPolys[uiNumPoly].pucTriRot);
 
   // fill in the gap in our table
-  memcpy(&m_asPolys[uiNumPoly], &m_asPolys[uiNumPoly+1], (m_uiNumPolys - uiNumPoly - 1) * sizeof(SPolys));
+  memmove(&m_asPolys[uiNumPoly], &m_asPolys[uiNumPoly+1], (m_uiNumPolys - uiNumPoly - 1) * sizeof(SPolys));
   m_uiNumPolys--;
 }

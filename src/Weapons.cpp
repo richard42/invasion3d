@@ -271,7 +271,7 @@ bool CWeapons::RemoveCurrent(void)
     }
 
   // copy the projectiles ahead of this one backwards
-  memcpy(&m_asProjectiles[m_uiCurrent], &m_asProjectiles[m_uiCurrent+1], (m_uiActive - m_uiCurrent - 1) * sizeof(SProjectile));
+  memmove(&m_asProjectiles[m_uiCurrent], &m_asProjectiles[m_uiCurrent+1], (m_uiActive - m_uiCurrent - 1) * sizeof(SProjectile));
 
   // decrement our counter
   m_uiActive--;
@@ -341,7 +341,7 @@ void CWeapons::CheckCollisions(void)
         // they collided - if the LaserBase shot is a cannonball, just remove the Invader shot
         if (m_asProjectiles[uiGoodShot].eProjType == E_PROJ_CANNONBALL)
           {
-          memcpy(&m_asProjectiles[uiBadShot], &m_asProjectiles[uiBadShot+1], (m_uiActive - uiBadShot - 1) * sizeof(SProjectile));
+          memmove(&m_asProjectiles[uiBadShot], &m_asProjectiles[uiBadShot+1], (m_uiActive - uiBadShot - 1) * sizeof(SProjectile));
           m_uiActive--;
           if (uiGoodShot > uiBadShot) uiGoodShot--;
           break;
@@ -358,9 +358,9 @@ void CWeapons::CheckCollisions(void)
         else
           { uiDestroyFirst = uiGoodShot; uiDestroySecond = uiBadShot; }
         // destroy them
-        memcpy(&m_asProjectiles[uiDestroyFirst], &m_asProjectiles[uiDestroyFirst+1], (m_uiActive - uiDestroyFirst - 1) * sizeof(SProjectile));
+        memmove(&m_asProjectiles[uiDestroyFirst], &m_asProjectiles[uiDestroyFirst+1], (m_uiActive - uiDestroyFirst - 1) * sizeof(SProjectile));
         m_uiActive--;
-        memcpy(&m_asProjectiles[uiDestroySecond], &m_asProjectiles[uiDestroySecond+1], (m_uiActive - uiDestroySecond - 1) * sizeof(SProjectile));
+        memmove(&m_asProjectiles[uiDestroySecond], &m_asProjectiles[uiDestroySecond+1], (m_uiActive - uiDestroySecond - 1) * sizeof(SProjectile));
         m_uiActive--;
         // adjust the uiGoodShot index
         if (uiGoodShot == uiDestroyFirst)
