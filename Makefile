@@ -85,7 +85,7 @@ DATAPATH = $(WKDPATH)/data
 
 # base CFLAGS, LIBS, and LDFLAGS
 CFLAGS += -ffast-math -funroll-loops -fexpensive-optimizations -fno-strict-aliasing -I$(INCPATH)
-LDFLAGS += -O3 -L/usr/X11R6/lib -lSDL-1.2 -lGL -lGLU
+LDFLAGS += -O3 -L/usr/X11R6/lib -lSDL -lGL -lGLU
 ASFLAGS += -f elf -DCFG_LINUX
 
 # set special flags per-system
@@ -123,7 +123,7 @@ ifeq ($(ARCH_DETECTED), 64BITS_32)
     $(error Do not use the BITS=32 option with FreeBSD, use -m32 and -m elf_i386)
   endif
   CFLAGS += -m32
-  LDFLAGS += -m32 -m elf_i386
+  LDFLAGS += -m32
 endif
 
 # set shell function names
@@ -241,14 +241,14 @@ endif
 
 # build rules
 $(EXEPATH)/$(TARGET): $(OBJECTS)
-	$(Q_LD)$(CC) $^ $(LDFLAGS) $(SRC_LIBS) -o $@
+	$(Q_LD)$(CXX) $^ $(LDFLAGS) $(SRC_LIBS) -o $@
 	$(STRIP) $@
 	$(CP) $(DATAPATH)/* $(EXEPATH)
 
 $(OBJECTS): Makefile
 
 $(OBJPATH)/%.o: $(SRCPATH)/%.cpp
-	$(Q_CC)$(CC) -o $@ $(CFLAGS) -c $<
+	$(Q_CC)$(CXX) -o $@ $(CFLAGS) -c $<
 
 $(OBJPATH)/%.o: $(SRCPATH)/%.asm
 	$(Q_ASM)$(ASM) $(ASFLAGS) $< -o $@
