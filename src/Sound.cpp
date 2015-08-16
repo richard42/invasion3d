@@ -46,7 +46,6 @@ SDL_mutex    *CSound::m_pMutex = NULL;
 
 bool CSound::InitSound(CPackage *pcMedia)
 {
-
   // create the mutex
   m_pMutex = SDL_CreateMutex();
 
@@ -89,6 +88,9 @@ bool CSound::InitSound(CPackage *pcMedia)
   if (!LoadClip(pcMedia, E_SOUND_MUSIC_1,   "beatplus.wav",   40)) return false;
   if (!LoadClip(pcMedia, E_SOUND_MUSIC_2,   "nicebeat.wav",   64)) return false;
   if (!LoadClip(pcMedia, E_SOUND_MYSTERY,   "cartoon189.wav", 16)) return false;
+
+  // activate the sound
+  SDL_PauseAudio(0);
 
   m_bInitialized = true;
   return true;
@@ -134,9 +136,6 @@ CSound::CSound()
 
   // set active sounds to 0
   m_uiActiveSounds = 0;
-
-  // activate the sound
-  SDL_PauseAudio(0);
 }
 
 CSound::~CSound()
