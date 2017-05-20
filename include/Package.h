@@ -56,7 +56,7 @@ public:
   unsigned int Length(unsigned int uiFile) const;
 
   // modifier functions
-  bool         LoadPackage(const char *pccPackagename);
+  bool         LoadPackage(char *pccPackagename);
   void         Unload(void);
   unsigned int OpenFile(const char *pccFilename);
   unsigned int ReadBytes(unsigned int uiFile, void *pvData, unsigned int uiBytes);

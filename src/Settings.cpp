@@ -50,8 +50,8 @@ CSettings::CSettings()
 {
   // set the default setting
   SetDefaults();
-  m_iScreenWidth  = 1024;
-  m_iScreenHeight = 768;
+  m_iScreenWidth  = 800;
+  m_iScreenHeight = 600;
   m_bFullscreen   = false;
 }
 
@@ -225,6 +225,13 @@ bool CSettings::LoadFromFile(void)
 
   // open the file
   FILE *fIn = fopen(chFilepath, "rb");
+  if (!fIn)
+    { /* couldn't open file. it won't be their the first time invasion3d is run */
+    /* so lets try saving the default settings */
+    SaveToFile();
+    /* if that worked we should be able to load it back */
+    fIn = fopen(chFilepath, "rb");
+    }
   if (!fIn)
     {
     printf("CSettings::LoadFromFile Error: Couldn't open file \"%s\" to load!\n", chFilepath);

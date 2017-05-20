@@ -1,0 +1,11 @@
+[Desktop Entry]
+Name=Invasion 3D
+GenericName=Invasion3D
+Comment=modern 3d version of space invaders. F2 to start. F3 to setup. Esc to quit.
+Type=Application
+Exec=invasion3d
+Icon=invasion3d
+Categories=Game;ActionGame;ArcadeGame;
+Terminal=false
+StartupNotify=false
+

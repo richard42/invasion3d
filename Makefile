@@ -154,7 +154,12 @@ endif
 ifeq ($(BINDIR),)
   BINDIR := $(PREFIX)/bin
 endif
-
+#added by to to allow for alternate media directory
+ifeq ($(MEDIADIR),)
+  MEDIADIR := $(BINDIR)
+endif
+#added so removal can be safer
+MEDIAFILE = Invaders.dat
 # list of source files to compile
 SOURCE = \
 	$(SRCPATH)/Bunker.cpp \
@@ -199,14 +204,14 @@ targets:
 	@echo "    clean          == remove object files and build products"
 	@echo "    rebuild        == clean and re-build all"
 	@echo "    install        == Install Invasion3D application"
-	@echo "    uninstall      == Uninstall Invasion3D pplication"
+	@echo "    uninstall      == Uninstall Invasion3D application"
 	@echo "  Options:"
 	@echo "    NO_ASM=1       == disable MMX assembly language optimizations"
 	@echo "    BITS=32        == build 32-bit binary on 64-bit machine"
 	@echo "    V=1            == display full commands when compiling"
 	@echo "  Install Options:"
-	@echo "    PREFIX=path    == install/uninstall prefix (default: /usr/local/)"
-	@echo "    BINDIR=path    == path to install mupen64plus binary (default: PREFIX/bin/)"
+	@echo "    BINDIR=path    == install/uninstall location (default: /usr/local/bin)"
+	@echo "    MEDIADIR=path  == install/uninstall location of game data (default: /usr/local/bin)"
 	@echo "    DESTDIR=path   == path to prepend to all installation paths (only for packagers)"
 	@echo "  Debugging Options:"
 	@echo "    DEBUG=1        == add debugging symbols to application binary"
@@ -222,9 +227,16 @@ rebuild: clean all
 install: $(EXEPATH)/$(TARGET)
 	$(INSTALL) -d -v "$(DESTDIR)$(BINDIR)"
 	$(INSTALL) -m 0755 $(EXEPATH)/$(TARGET) "$(DESTDIR)$(BINDIR)"
+	$(INSTALL) -d -v "$(DESTDIR)$(MEDIADIR)"
+	$(INSTALL) -m 0644 $(DATAPATH)/$(MEDIAFILE) "$(DESTDIR)$(MEDIADIR)"
+	$(INSTALL) -d -v "$(DESTDIR)/usr/share/pixmaps"
+	$(INSTALL) -m 0644 $(DATAPATH)/Invasion3D.png "$(DESTDIR)/usr/share/pixmaps/invasion3d.png"
+	$(INSTALL) -d -v "$(DESTDIR)/usr/share/applications"
+	$(INSTALL) -m -0644 "$(DATAPATH)/invasion3d.desktop" "$(DESTDIR)/usr/share/applications"
 
 uninstall:
 	rm -f "$(DESTDIR)$(BINDIR)/$(TARGET)"
+	rm -f "$(DESTDIR)$(MEDIADIR)/$(MEDIAFILE)"
 
 # build dependency files
 CFLAGS += -MD
@@ -243,12 +255,12 @@ endif
 $(EXEPATH)/$(TARGET): $(OBJECTS)
 	$(Q_LD)$(CXX) $^ $(LDFLAGS) $(SRC_LIBS) -o $@
 	$(STRIP) $@
-	$(CP) $(DATAPATH)/* $(EXEPATH)
+	$(CP) $(DATAPATH)/$(MEDIAFILE) $(EXEPATH)
 
 $(OBJECTS): Makefile
 
 $(OBJPATH)/%.o: $(SRCPATH)/%.cpp
-	$(Q_CC)$(CXX) -o $@ $(CFLAGS) -c $<
+	$(Q_CC)$(CXX) -o $@ $(CFLAGS) -D BIN_DIR=\"${BINDIR}\" -D MEDIA_DIR=\"${MEDIADIR}\" -c $<
 
 $(OBJPATH)/%.o: $(SRCPATH)/%.asm
 	$(Q_ASM)$(ASM) $(ASFLAGS) $< -o $@

@@ -64,7 +64,7 @@ unsigned int CPackage::Length(unsigned int uiFile) const
 /////////////////////////////////////////////////////////////////////////////
 // CPackage modifier functions
 
-bool CPackage::LoadPackage(const char *pccPackagename)
+bool CPackage::LoadPackage(char *pccPackagename)
 {
   SHeader sHeader;
 
@@ -73,6 +73,15 @@ bool CPackage::LoadPackage(const char *pccPackagename)
 
   // open the file and read the header
   FILE *pfIn = fopen(pccPackagename, "rb");
+  if (!pfIn)
+    { /* fail to open file, so lets try different location if defined */
+      if (strcmp(BIN_DIR,MEDIA_DIR)!=0)  /* data is not in same location as binary, change packagename and try to load it */
+      {
+        strcpy(pccPackagename,MEDIA_DIR);
+        strcat(pccPackagename,"/Invaders.dat");
+        pfIn = fopen(pccPackagename, "rb");
+      }
+    }
   if (!pfIn)
     {
     printf("LoadPackage error: couldn't open file \"%s\" for reading.\n", pccPackagename);
