@@ -311,7 +311,11 @@ void *_aligned_malloc(size_t sz, size_t alignment)
 {
   void    *pvData;
 
+#if defined(__sgi)
+  pvData = memalign(alignment, sz);
+#else
   if (posix_memalign(&pvData, alignment, sz)) pvData = NULL;
+#endif
 
   return pvData;
 }

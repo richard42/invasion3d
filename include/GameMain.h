@@ -23,7 +23,7 @@
 #if !defined(GAMEMAIN_H)
 #define GAMEMAIN_H
 
-#include <SDL/SDL.h>
+#include "SDL/SDL.h"
 #include <string.h>
 #include "Settings.h"
 

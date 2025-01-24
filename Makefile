@@ -38,6 +38,9 @@ endif
 ifeq ("$(UNAME)","FreeBSD")
   OS = FREEBSD
 endif
+ifeq ("$(UNAME)","IRIX64")
+  OS = IRIX
+endif
 ifneq ("$(filter GNU/kFreeBSD kfreebsd,$(UNAME))","")
   OS = LINUX
 endif
@@ -70,6 +73,15 @@ ifneq ("$(filter ppc64 powerpc64,$(HOST_CPU))","")
   CPU := PPC
   ARCH_DETECTED := 64BITS
   NO_ASM := 1
+endif
+ifeq ("$(UNAME)","IRIX64")
+  CPU := MIPS
+  ARCH_DETECTED := 64BITS
+  NO_ASM := 1
+  CC = C99
+  CXX = CC
+  CFLAGS += -64 -I/usr/freeware/include -DCPU_BIG_ENDIAN
+  LDFLAGS += -64 -L/usr/freeware/lib64 -lm -lpthread
 endif
 ifeq ("$(CPU)","NONE")
   $(error CPU type "$(HOST_CPU)" not supported.  Please file bug report at 'http://code.google.com/p/invasion3d/issues')

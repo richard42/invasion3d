@@ -31,8 +31,18 @@
 #include <stdlib.h>
 #include <stdio.h>
 #include <string.h>
+#include <sys/types.h>
+#include <netinet/in.h>
 
 #include "Package.h"
+
+#if defined(CPU_BIG_ENDIAN)
+    static uint32_t bswap32(uint32_t uiIn)
+    {
+        return (uiIn >> 24) + ((uiIn >> 8) & 0xff00) +
+               ((uiIn & 0xff00) << 8) + (uiIn << 24); 
+    }
+#endif
 
 /////////////////////////////////////////////////////////////////////////////
 // CPackage constructor and destructor
@@ -94,6 +104,12 @@ bool CPackage::LoadPackage(char *pccPackagename)
     return false;
     }
 
+    //  bytes swap everything for big-endian platforms
+#if defined(CPU_BIG_ENDIAN)
+    sHeader.uiVersion = bswap32(sHeader.uiVersion);
+    sHeader.uiDirEntries = bswap32(sHeader.uiDirEntries);
+#endif
+
   // check the header
   if (strncmp(sHeader.chTag, "PackitUP", 8) != 0 || sHeader.uiVersion != 0x1010)
     {
@@ -125,6 +141,11 @@ bool CPackage::LoadPackage(char *pccPackagename)
       m_psDirectory = NULL;
       return false;
       }
+#if defined(CPU_BIG_ENDIAN)
+    sTempDir.uiFileLength = bswap32(sTempDir.uiFileLength);
+    sTempDir.uiCRC32 = bswap32(sTempDir.uiCRC32);
+    sTempDir.uiIndex = bswap32(sTempDir.uiIndex);
+#endif
     // translate directory entry to allow for different sized pointers (64-bit)
     memcpy(m_psDirectory[ui].chFilename, sTempDir.chFilename, 64);
     m_psDirectory[ui].uiFileLength = sTempDir.uiFileLength;
