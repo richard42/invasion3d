@@ -121,7 +121,11 @@ CSound::CSound()
   // set up desired audio specs
   memset(&m_AudioSpec, 0, sizeof(m_AudioSpec));
   m_AudioSpec.freq     = 22050;
+#if defined(CPU_BIG_ENDIAN)
+  m_AudioSpec.format   = AUDIO_S16MSB;
+#else
   m_AudioSpec.format   = AUDIO_S16LSB;
+#endif
   m_AudioSpec.channels = 1;
   m_AudioSpec.samples  = m_ciBufferLength;
   m_AudioSpec.callback = AudioCallback;
