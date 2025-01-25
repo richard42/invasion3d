@@ -37,7 +37,6 @@
 #include <string.h>
 #include <memory.h>
 #include <math.h>
-#include <time.h>
 
 #include "GameMain.h"
 #include "GameLogic.h"
@@ -161,12 +160,12 @@ void CGameMain::MainLoop(void)
   unsigned int uiTimeStart   = SDL_GetTicks();
 
   // get start time
-  clock_t liNextFrame = clock();
+  unsigned int uiNextFrame = uiTimeStart;
 
   // main loop for the Invasion3D game
   while (m_eGameMode != E_QUIT)
     {
-    clock_t liFrameTimeStart = liNextFrame;
+    unsigned int uiFrameTimeStart = uiNextFrame;
     // calculate time expansion factor
     float fTimeFactor = 1.0f;
     if (m_uiBulletTimeStart > 0)
@@ -198,8 +197,8 @@ void CGameMain::MainLoop(void)
     do 
       {
       //if (uiFrameTime < 5) SDL_Delay(1);
-      liNextFrame = clock();
-      uiFrameTime = (unsigned int) ((float) (liNextFrame - liFrameTimeStart) * 1000.0f / CLOCKS_PER_SEC);
+      uiNextFrame = SDL_GetTicks();
+      uiFrameTime = (uiNextFrame - uiFrameTimeStart);
       } while(uiFrameTime < 5);  // cap max FPS at 200
     // set frame time in array for FPS display
 #ifdef _DEBUG
