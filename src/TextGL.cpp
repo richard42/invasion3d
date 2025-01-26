@@ -172,10 +172,7 @@ void CTextGL::Draw(void) const
     {
     glTexEnvi(GL_TEXTURE_ENV, GL_TEXTURE_ENV_MODE, GL_REPLACE);
     }
-  else
-    {
-    glColor3ubv(m_uchColor);
-    }
+  glColor3ubv(m_uchColor);
   glBindTexture(GL_TEXTURE_2D, m_asFonts[m_eFont].glCharTexture);
 
   // parse through the string, looking for line feeds

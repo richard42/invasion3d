@@ -2380,6 +2380,7 @@ void CGameLogic::DrawEndingSequence() const
           glBlendFunc(GL_SRC_ALPHA,GL_ONE_MINUS_SRC_ALPHA);
           }
         glTexEnvi(GL_TEXTURE_ENV, GL_TEXTURE_ENV_MODE, GL_REPLACE);
+        glColor3ub(255, 255, 255);
         glBindTexture(GL_TEXTURE_2D, CTextures::GetTextureID(E_TEX_MAME));
 	      glBegin(GL_QUADS);
 		    glTexCoord2f(0.0f, 0.0f); glVertex3f(-200, fOffsetY + 0.0f, -10.0f);
