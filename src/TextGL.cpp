@@ -545,7 +545,7 @@ bool CTextGL::CreateFontGL(CPackage *pcMedia, eFont eType, const char *pchBMPNam
   while (uiTextureWidth < uiWidth) uiTextureWidth <<= 1;
 
   // allocate a buffer for making the textures
-  unsigned int uiTexBufSize = uiTextureWidth * uiTextureHeight * 4;
+  unsigned int uiTexBufSize = uiTextureWidth * uiTextureHeight;
   unsigned char *pucTexBuf = (unsigned char *) malloc(uiTexBufSize);
   if (!pucTexBuf)
     {
