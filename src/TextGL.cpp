@@ -241,14 +241,15 @@ void CTextGL::DrawLine(const char *pchString, int iLength, float fX, float fY, f
     iGlyph--;
     // draw a single character
     float fX1 = fX + fRatio * (float) m_asFonts[m_eFont].uiCharWidth[iGlyph];
-    float fTx0 = (float) m_asFonts[m_eFont].uiCharPosition[iGlyph] / (float) m_asFonts[m_eFont].uiTextureWidth;
-    float fTx1 = fTx0 + ((float) m_asFonts[m_eFont].uiCharWidth[iGlyph] - 0.5f) / (float) m_asFonts[m_eFont].uiTextureWidth;
-    float fTy1 = (float) m_asFonts[m_eFont].uiFontHeight / (float) m_asFonts[m_eFont].uiTextureHeight;
-	  glBegin(GL_QUADS);
-		glTexCoord2f(fTx0, 0.0f); glVertex3f(fX,  fY,             fZ);
-		glTexCoord2f(fTx0, fTy1); glVertex3f(fX,  fY + m_fHeight, fZ);
-		glTexCoord2f(fTx1, fTy1); glVertex3f(fX1, fY + m_fHeight, fZ);
-		glTexCoord2f(fTx1, 0.0f); glVertex3f(fX1, fY,             fZ);
+    float fTx0 = (float) m_asFonts[m_eFont].uiCharPositionX[iGlyph] / m_asFonts[m_eFont].uiTextureWidth;
+    float fTx1 = fTx0 + ((float) m_asFonts[m_eFont].uiCharWidth[iGlyph] - 0.5f) / m_asFonts[m_eFont].uiTextureWidth;
+    float fTy0 = (float) m_asFonts[m_eFont].uiCharPositionY[iGlyph] / m_asFonts[m_eFont].uiTextureHeight;
+    float fTy1 = fTy0 + (float) m_asFonts[m_eFont].uiFontHeight / m_asFonts[m_eFont].uiTextureHeight;
+    glBegin(GL_QUADS);
+      glTexCoord2f(fTx0, fTy0); glVertex3f(fX,  fY,             fZ);
+      glTexCoord2f(fTx0, fTy1); glVertex3f(fX,  fY + m_fHeight, fZ);
+      glTexCoord2f(fTx1, fTy1); glVertex3f(fX1, fY + m_fHeight, fZ);
+      glTexCoord2f(fTx1, fTy0); glVertex3f(fX1, fY,             fZ);
     glEnd();
     fX = fX1 + fRatio;
     }
@@ -539,10 +540,43 @@ bool CTextGL::CreateFontGL(CPackage *pcMedia, eFont eType, const char *pchBMPNam
     return false;
     }
 
+  // decide how many rows of characters to use in texture
+  unsigned int uiCharRows = 1;
+  unsigned int uiRowStartChar[8];
+  unsigned int uiRowNumChars[8];
+  uiRowStartChar[0] = 0;
+  uiRowNumChars[0] = 87;
+  if (uiWidth > m_uiMaxWidth)
+  {
+    for (unsigned int uiCurChar = 0; uiCurChar < 87; uiCurChar++)
+    {
+      // if this char extends beyond the maximum width, then go to the next row
+      if (uiCharLeft[uiCurChar] + uiCharWidth[uiCurChar]
+                                - uiCharLeft[uiRowStartChar[uiCharRows-1]] > m_uiMaxWidth)
+      {
+        uiRowStartChar[uiCharRows] = uiCurChar;
+        uiRowNumChars[uiCharRows-1] = uiCurChar - uiRowStartChar[uiCharRows-1];
+        uiCharRows++;
+        continue;
+      }
+    }
+    // fill in the count of characters in the last row
+    uiRowNumChars[uiCharRows-1] = 87 - uiRowStartChar[uiCharRows-1];
+    // sanity check that this font will fit in a texture
+    if (uiCharRows * uiFontHeight > m_uiMaxWidth)
+    {
+      printf("Error: font '%s' bitmap will not fit in biggest texture.\n", pchBMPName);
+      free(pucPicBuffer);
+      return false;
+    }
+  }
+
   // find nearest power of 2 for width and height of texture
+  const unsigned int uiNeededWidth = (uiWidth < m_uiMaxWidth) ? uiWidth : m_uiMaxWidth;
+  const unsigned int uiNeededHeight = uiCharRows * uiFontHeight;
   unsigned int uiTextureHeight = 32, uiTextureWidth = 32;
-  while (uiTextureHeight < uiFontHeight) uiTextureHeight <<= 1;
-  while (uiTextureWidth < uiWidth) uiTextureWidth <<= 1;
+  while (uiTextureHeight < uiNeededHeight) uiTextureHeight <<= 1;
+  while (uiTextureWidth < uiNeededWidth) uiTextureWidth <<= 1;
 
   // allocate a buffer for making the textures
   unsigned int uiTexBufSize = uiTextureWidth * uiTextureHeight;
@@ -560,47 +594,43 @@ bool CTextGL::CreateFontGL(CPackage *pcMedia, eFont eType, const char *pchBMPNam
   m_asFonts[eType].uiTextureHeight = uiTextureHeight;
 
   // save the width and position of each character
+  unsigned int uiCurrentRow = 0;
+  unsigned int uiRowFontLeftX = uiCharLeft[0];
   for (int iChar = 0; iChar < 87; iChar++)
     {
-    m_asFonts[eType].uiCharPosition[iChar] = uiCharLeft[iChar];
+    m_asFonts[eType].uiCharPositionX[iChar] = uiCharLeft[iChar] - uiRowFontLeftX;
+    m_asFonts[eType].uiCharPositionY[iChar] = uiCurrentRow * uiFontHeight;
     m_asFonts[eType].uiCharWidth[iChar] = uiCharWidth[iChar];
+    if (uiRowStartChar[uiCurrentRow] + uiRowNumChars[uiCurrentRow] == iChar + 1 && iChar < 86)
+      {
+      uiCurrentRow += 1;
+      uiRowFontLeftX = uiCharLeft[iChar + 1];
+      }
     }
 
   // clear the texture buffer
   memset(pucTexBuf, 0, uiTexBufSize);
 
-  // now invert each byte and make contiguous buffer
-  unsigned int uiLeft = 0;
-  unsigned int uiRight = uiCharLeft[86] + uiCharWidth[86] - 1;
-  for (unsigned int iY = uiTop; iY <= uiBottom; iY++)
+  // now copy the font into the texture buffer, inverting each byte
+  for (unsigned int uiCharRow = 0; uiCharRow < uiCharRows; uiCharRow++)
     {
-    unsigned char *pucDst = pucTexBuf + uiTextureWidth * (iY - uiTop);
-    for (unsigned int iX = uiLeft; iX <= uiRight; iX++)
+    const unsigned int uiCharStart = uiRowStartChar[uiCharRow];
+    const unsigned int uiCharEnd = uiCharStart + uiRowNumChars[uiCharRow] - 1;
+    const unsigned int uiLeftX = uiCharLeft[uiCharStart];
+    const unsigned int uiRightX = uiCharLeft[uiCharEnd] + uiCharWidth[uiCharEnd] - 1;
+    const unsigned int uiRowFontTopY = uiCharRow * uiFontHeight;
+    for (unsigned int iY = uiTop; iY <= uiBottom; iY++)
       {
-      *pucDst++ = 0xff - pucPicBuffer[iY * iStride + iX];
+      unsigned char *pucDst = pucTexBuf + uiTextureWidth * (uiRowFontTopY + iY - uiTop);
+      for (unsigned int iX = uiLeftX; iX <= uiRightX; iX++)
+	{
+	*pucDst++ = 0xff - pucPicBuffer[iY * iStride + iX];
+	}
       }
     }
 
   // free the pic buffer
   free(pucPicBuffer);
-
-  // if this texture is wider than this OpenGL implementation supports, then compress it
-  if (uiTextureWidth > m_uiMaxWidth)
-    {
-    unsigned int uiFactor = uiTextureWidth / m_uiMaxWidth;
-    unsigned char *pucDst = pucTexBuf;
-    unsigned char *pucSrc = pucDst;
-    // multisample the pixels
-    for (unsigned int ui = 0; ui < uiTextureHeight * m_uiMaxWidth; ui++)
-      {
-      unsigned int uiPix = 0;
-      for (unsigned int uiM = 0; uiM < uiFactor; uiM++)
-        uiPix += *pucSrc++;
-      *pucDst++ = (uiPix + (uiFactor >> 1)) / uiFactor;
-      }
-    // adjust our variables
-    uiTextureWidth = m_uiMaxWidth;
-    }
 
   // now generate the texture
   glGenTextures(1, &(m_asFonts[eType].glCharTexture));

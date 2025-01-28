@@ -44,7 +44,8 @@ typedef enum {E_LEFT = 0,
 
 // structure for each font
 typedef struct {GLuint       glCharTexture;
-                unsigned int uiCharPosition[87];
+                unsigned int uiCharPositionX[87];
+                unsigned int uiCharPositionY[87];
                 unsigned int uiCharWidth[87];
                 unsigned int uiFontHeight;
                 unsigned int uiTextureWidth;
