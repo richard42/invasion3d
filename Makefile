@@ -80,7 +80,7 @@ ifeq ("$(UNAME)","IRIX64")
   NO_ASM := 1
   CC = C99
   CXX = CC
-  CFLAGS += -64 -I/usr/freeware/include -DCPU_BIG_ENDIAN
+  CFLAGS += -64 -mips4 -O3 -I/usr/freeware/include -DCPU_BIG_ENDIAN
   LDFLAGS += -64 -L/usr/freeware/lib64 -lm -lpthread
 endif
 ifeq ("$(CPU)","NONE")
@@ -152,7 +152,7 @@ endif
 
 # set special flags for given Makefile parameters
 ifeq ($(DEBUG),1)
-  CFLAGS += -g
+  CFLAGS += -g -D_DEBUG
   STRIP = true # disable binary strip
 endif
 ifeq ($(NO_ASM),1)
