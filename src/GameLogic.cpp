@@ -39,6 +39,7 @@
 #include "GameMain.h"
 #include "GameLogic.h"
 #include "Gameplay.h"
+#include "GLProfile.h"
 #include "Settings.h"
 #include "Invader.h"
 #include "Invader10.h"
@@ -308,7 +309,7 @@ void CGameLogic::SetupWave(void)
 /////////////////////////////////////////////////////////////////////////////
 // CGameLogic accessors
 
-void CGameLogic::Draw(void) const
+void CGameLogic::Draw(GLProfile &profile) const
 {
   // draw the star-field background
   glDisable(GL_LIGHTING);
@@ -319,6 +320,11 @@ void CGameLogic::Draw(void) const
   glDrawArrays(GL_POINTS, 0, CGameplay::m_iNumStars);
   glDisableClientState(GL_VERTEX_ARRAY);
   glEnable(GL_LIGHTING);
+#if defined(GL_PROFILE)
+  if (profile.bGLFinishAfterEach)
+    glFinish();
+  profile.uiTimeStars = SDL_GetTicks();
+#endif
 
   // draw the shockwave
   if (m_bShockwave)
@@ -359,6 +365,11 @@ void CGameLogic::Draw(void) const
     glDisable(GL_TEXTURE_2D);
     glEnable(GL_LIGHTING);
     }
+#if defined(GL_PROFILE)
+  if (profile.bGLFinishAfterEach)
+    glFinish();
+  profile.uiTimeShockwave = SDL_GetTicks();
+#endif
 
   // draw all of the invaders
   if (m_eGameState != E_WAVE_BEGIN && m_eGameState != E_WAVE_END && m_eGameState != E_WON_GAME)
@@ -394,6 +405,11 @@ void CGameLogic::Draw(void) const
       glPopMatrix();
       }
     }
+#if defined(GL_PROFILE)
+  if (profile.bGLFinishAfterEach)
+    glFinish();
+  profile.uiTimeInvaders = SDL_GetTicks();
+#endif
 
   // draw the bunkers
   for (int i = 0; i < 4; i++)
@@ -413,13 +429,33 @@ void CGameLogic::Draw(void) const
     m_LaserBase.Draw();
     glPopMatrix();
     }
+#if defined(GL_PROFILE)
+  if (profile.bGLFinishAfterEach)
+    glFinish();
+  profile.uiTimeBases = SDL_GetTicks();
+#endif
 
   // draw On-Screen Display
   DrawOSD();
+#if defined(GL_PROFILE)
+  if (profile.bGLFinishAfterEach)
+    glFinish();
+  profile.uiTimeOSD = SDL_GetTicks();
+#endif
   // draw the particles
   m_Particles.Draw();
+#if defined(GL_PROFILE)
+  if (profile.bGLFinishAfterEach)
+    glFinish();
+  profile.uiTimeParticles = SDL_GetTicks();
+#endif
   // draw the bullets
   m_Weapons.Draw();
+#if defined(GL_PROFILE)
+  if (profile.bGLFinishAfterEach)
+    glFinish();
+  profile.uiTimeWeapons = SDL_GetTicks();
+#endif
 
   // draw special screens
   switch (m_eGameState)
@@ -445,7 +481,11 @@ void CGameLogic::Draw(void) const
     default:
       break;
     }
-
+#if defined(GL_PROFILE)
+  if (profile.bGLFinishAfterEach)
+    glFinish();
+  profile.uiTimeSpecial = SDL_GetTicks();
+#endif
 }
 
 /////////////////////////////////////////////////////////////////////////////

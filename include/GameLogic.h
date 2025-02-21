@@ -40,6 +40,7 @@ class CGameMain;
 class CInvader;
 class CInvaderMystery;
 class CSound;
+class GLProfile;
 
 typedef enum {E_WAVE_BEGIN = 0,
               E_GAME_PLAY,
@@ -56,7 +57,7 @@ public:
   ~CGameLogic();
 
   // accessor functions
-  void Draw(void) const;
+  void Draw(GLProfile &profile) const;
 
   // modifier functions
   void Initialize(CGameMain *pGameMain, CSettings *pSettings, CSound *pSound);

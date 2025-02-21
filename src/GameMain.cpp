@@ -40,6 +40,7 @@
 
 #include "GameMain.h"
 #include "GameLogic.h"
+#include "GLProfile.h"
 #include "Settings.h"
 #include "Invader10.h"
 #include "Invader20.h"
@@ -161,6 +162,7 @@ void CGameMain::MainLoop(void)
 
   // get start time
   unsigned int uiNextFrame = uiTimeStart;
+  unsigned int uiFramesSkipped = 0;
 
   // main loop for the Invasion3D game
   while (m_eGameMode != E_QUIT)
@@ -192,7 +194,48 @@ void CGameMain::MainLoop(void)
       default:
         break;
       }
-    DrawFrame();
+    GLProfile profile;
+#if defined(GL_PROFILE)
+    // set up profiling parameters and set the first timestamp
+    profile.bGLFinishAfterEach = false;
+    profile.uiFrameTimeMS = 10;
+    profile.uiTimeProcess  = SDL_GetTicks();
+#endif
+    DrawFrame(profile);
+#if defined(GL_PROFILE)
+    // if we skipped a frame on the last redraw, paint a red box in the top left corner on this frame
+    if (uiFramesSkipped > 0)
+    {
+      glDisable(GL_LIGHTING);
+      glBegin(GL_QUADS);
+      glColor4f(1.0, 0, 0, 1.0f);
+      glVertex3f(-512.0f, -512.0f, -20.0f);
+      glVertex3f(-512.0f, -300.0f, -20.0f);
+      glVertex3f(-300.0f, -300.0f, -20.0f);
+      glVertex3f(-300.0f, -512.0f, -20.0f);
+      glEnd();
+      glEnable(GL_LIGHTING);
+    }
+#endif
+
+    // flip the double buffer
+    SDL_GL_SwapBuffers();
+
+#if defined(GL_PROFILE)
+    // we must issue a GL command to make it wait for frame swap
+    glMatrixMode(GL_MODELVIEW);
+    glLoadIdentity();
+    gluLookAt(0,100,-1600, 0,50,0, 0,-1,0);
+    profile.uiTimeFlip  = SDL_GetTicks();
+
+    // calculate GL profile timing
+    uiFramesSkipped = profile.CalculateTiming(uiFrameTimeStart);
+    if (m_eGameMode == E_GAMERUN && uiFramesSkipped > 0)
+    {
+      unsigned int uiTimeOther = profile.uiTimeClear + profile.uiTimeSetup + profile.uiTimeBases + profile.uiTimeOSD;
+      printf("Skipped %i frames (Process: %i  Stars: %i  Shockwave:%i  Invaders: %i  Particles: %i  Weapons: %i  Special: %i  Other: %i  Flip: %i)\n", uiFramesSkipped, profile.uiTimeProcess, profile.uiTimeStars, profile.uiTimeShockwave, profile.uiTimeInvaders, profile.uiTimeParticles, profile.uiTimeWeapons, profile.uiTimeSpecial, uiTimeOther, profile.uiTimeFlip);
+    }
+#endif
     // calculate frame time to pass to ProcessState() in the next loop
     do 
       {
@@ -228,6 +271,11 @@ void CGameMain::SetMode(EGameMode eMode)
     glHint(GL_PERSPECTIVE_CORRECTION_HINT, GL_NICEST);
     }
 
+#if defined(GL_PROFILE)
+  const char *pccModes[4] = { "Intro", "Demo", "Running", "Quitting" };
+  printf("Switching game mode to: %s\n", pccModes[eMode]);
+#endif
+
   // switch modes
   m_eGameMode         = eMode;
   m_uiModeTime        = 0;
@@ -245,10 +293,13 @@ void CGameMain::SetBulletTime(bool bActive)
 /////////////////////////////////////////////////////////////////////////////
 // CGameMain class lower-level private functions
 
-void CGameMain::DrawFrame(void)
+void CGameMain::DrawFrame(GLProfile &profile)
 {
   // Clear the color and depth buffers
   glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+#if defined(GL_PROFILE)
+  profile.uiTimeClear = SDL_GetTicks();
+#endif
 
   switch (m_eGameMode)
     {
@@ -286,19 +337,21 @@ void CGameMain::DrawFrame(void)
       break;
       }
     case E_GAMERUN:
+    {
       // setup the coordinate system
       glMatrixMode(GL_MODELVIEW);
       glLoadIdentity();
       gluLookAt(0,100,-1600, 0,50,0, 0,-1,0);
+#if defined(GL_PROFILE)
+      profile.uiTimeSetup = SDL_GetTicks();
+#endif
       // draw the gameplay screen
-      m_pcGameLogic->Draw();
+      m_pcGameLogic->Draw(profile);
       break;
+    }
     default:
       break;
     }
-
-  // flip the double buffer
-  SDL_GL_SwapBuffers();
 }
 
 /////////////////////////////////////////////////////////////////////////////

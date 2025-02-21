@@ -31,6 +31,7 @@ class CDemo;
 class CIntro;
 class CSound;
 class CGameLogic;
+class GLProfile;
 
 #define MAX_JOYSTICKS 4
 
@@ -85,7 +86,7 @@ public:
 
 private:
   // main sub-functions
-  void DrawFrame(void);
+  void DrawFrame(GLProfile &profile);
 
   // SDL joystick pointers
   SDL_Joystick *m_pJoystick[MAX_JOYSTICKS];
