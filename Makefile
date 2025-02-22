@@ -80,8 +80,8 @@ ifeq ("$(UNAME)","IRIX64")
   NO_ASM := 1
   CC = C99
   CXX = CC
-  CFLAGS += -64 -mips4 -O3 -I/usr/freeware/include -DCPU_BIG_ENDIAN
-  LDFLAGS += -64 -L/usr/freeware/lib64 -lm -lpthread
+  CFLAGS += -64 -mips4 -I/usr/freeware/include -DCPU_BIG_ENDIAN
+  LDFLAGS += -64 -IPA -L/usr/freeware/lib64 -lm -lpthread
 endif
 ifeq ("$(CPU)","NONE")
   $(error CPU type "$(HOST_CPU)" not supported.  Please file bug report at 'http://code.google.com/p/invasion3d/issues')
@@ -95,8 +95,15 @@ INCPATH	= $(WKDPATH)/include
 EXEPATH	= $(WKDPATH)/bin
 DATAPATH = $(WKDPATH)/data
 
+# optimization flags
+ifeq ("$(UNAME)","IRIX64")
+  OPTFLAGS := -Ofast -OPT:olimit=0:roundoff=3 -TARG:platform=IP30:proc=r10000
+else
+  OPTFLAGS := -ffast-math -funroll-loops -fexpensive-optimizations -fno-strict-aliasing
+endif
+
 # base CFLAGS, LIBS, and LDFLAGS
-CFLAGS += -ffast-math -funroll-loops -fexpensive-optimizations -fno-strict-aliasing -I$(INCPATH)
+CFLAGS += $(OPTFLAGS) -I$(INCPATH)
 LDFLAGS += -O3 -L/usr/X11R6/lib -lSDL -lGL -lGLU
 ASFLAGS += -f elf -DCFG_LINUX
 
@@ -235,7 +242,7 @@ targets:
 all: $(EXEPATH)/$(TARGET)
 
 clean:
-	rm -rf $(OBJPATH)/* $(EXEPATH)/*
+	rm -rf $(OBJPATH)/* $(EXEPATH)/* *.d
 	rmdir $(OBJPATH) $(EXEPATH)
 
 rebuild: clean all
