@@ -30,7 +30,11 @@
 #ifdef WIN32
   #include <windows.h>
 #endif
-#include <GL/gl.h>
+#if defined(__APPLE__)
+  #include <OpenGL/gl.h>
+#else
+  #include <GL/gl.h>
+#endif
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>

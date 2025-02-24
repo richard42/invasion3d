@@ -31,7 +31,11 @@
   #include <shlobj.h>
   #include <shlwapi.h>
 #endif
-#include <SDL/SDL.h>
+#if defined(__APPLE__)
+  #include <SDL.h>
+#else
+  #include <SDL/SDL.h>
+#endif
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>

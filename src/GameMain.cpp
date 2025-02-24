@@ -25,12 +25,18 @@
 ** GameMain.cpp - contains implementation of CGameMain class               **
 ****************************************************************************/
 
-#include <SDL/SDL.h>
 #ifdef WIN32
   #include <windows.h>
 #endif
-#include <GL/gl.h>
-#include <GL/glu.h>
+#if defined(__APPLE__)
+  #include <SDL.h>
+  #include <OpenGL/gl.h>
+  #include <OpenGL/glu.h>
+#else
+  #include <SDL/SDL.h>
+  #include <GL/gl.h>
+  #include <GL/glu.h>
+#endif
 
 #include <stdio.h>
 #include <stdlib.h>
@@ -507,7 +513,8 @@ bool CGameMain::InitGL(void)
     m_bAlphaSupported = true;
 
     // determine if we're running on a Mach64
-    if (strstr((const char *) glGetString(GL_RENDERER), "Rage Pro") != NULL)
+    const char *pccRenderer = (const char *) glGetString(GL_RENDERER);
+    if (pccRenderer != NULL && strstr(pccRenderer, "Rage Pro") != NULL)
       m_bUseLuminance = false;
     else
       m_bUseLuminance = true;

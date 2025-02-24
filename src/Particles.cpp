@@ -29,10 +29,14 @@
 
 #ifdef WIN32
   #include <windows.h>
+  #include <malloc.h>
 #endif
-#include <GL/gl.h>
+#if defined(__APPLE__)
+  #include <OpenGL/gl.h>
+#else
+  #include <GL/gl.h>
+#endif
 #include <stdlib.h>
-#include <malloc.h>
 #include <memory.h>
 #include <math.h>
 

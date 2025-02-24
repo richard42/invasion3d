@@ -26,7 +26,11 @@
 #ifdef WIN32
   #include <windows.h>
 #endif
-#include <GL/gl.h>
+#if defined(__APPLE__)
+  #include <OpenGL/gl.h>
+#else
+  #include <GL/gl.h>
+#endif
 
 #include "Gameplay.h"
 #include "Particles.h"
@@ -51,7 +55,7 @@ class CInvader
 {
 public:
   CInvader();
-  ~CInvader();
+  virtual ~CInvader();
 
   // accessor functions
   virtual void Draw(void) const = 0;

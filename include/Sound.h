@@ -19,9 +19,13 @@
  *   51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.          *
  * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 
-
-#include <SDL/SDL.h>
-#include <SDL/SDL_thread.h>
+#if defined(__APPLE__)
+  #include <SDL.h>
+  #include <SDL_thread.h>
+#else
+  #include <SDL/SDL.h>
+  #include <SDL/SDL_thread.h>
+#endif
 
 #if !defined(SOUND_H)
 #define SOUND_H

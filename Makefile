@@ -99,7 +99,11 @@ DATAPATH = $(WKDPATH)/data
 ifeq ("$(UNAME)","IRIX64")
   OPTFLAGS := -Ofast -OPT:olimit=0:roundoff=3 -TARG:platform=IP30:proc=r10000
 else
-  OPTFLAGS := -ffast-math -funroll-loops -fexpensive-optimizations -fno-strict-aliasing
+  ifeq ("$(UNAME)","Darwin")
+    OPTFLAGS := -ffast-math -funroll-loops -fno-strict-aliasing
+  else
+    OPTFLAGS := -ffast-math -funroll-loops -fexpensive-optimizations -fno-strict-aliasing
+  endif
 endif
 
 # base CFLAGS, LIBS, and LDFLAGS
@@ -121,19 +125,15 @@ ifeq ($(OS), LINUX)
 endif
 ifeq ($(OS), OSX)
   # The mac version of SDL requires inclusion of SDL_main in the executable
+  CFLAGS += $(shell sdl-config --cflags) -Wno-deprecated-declarations
   LDFLAGS += -ldl $(shell sdl-config --libs)
   ifeq ($(CPU), X86)
-    ifeq ($(ARCH_DETECTED), 64BITS)
-      CFLAGS += -pipe -O3 -arch x86_64 -mmacosx-version-min=10.5 -isysroot /Developer/SDKs/MacOSX10.5.sdk
-      LDFLAGS += -arch x86_64
-    else
-      CFLAGS += -pipe -O3 -mmmx -msse -fomit-frame-pointer -arch i686 -mmacosx-version-min=10.5 -isysroot /Developer/SDKs/MacOSX10.5.sdk
-      LDFLAGS += -arch i686
-    endif
+    CFLAGS += -pipe -O3 -arch x86_64 -mmacosx-version-min=10.15 -isysroot /Library/Developer/CommandLineTools/SDKs/MacOSX10.15.sdk
+    LDFLAGS += -arch x86_64
   endif
-endif
-ifeq ($(CPU), PPC)
-  CFLAGS += -mcpu=powerpc
+  ifeq ($(CPU), PPC)
+    CFLAGS += -mcpu=powerpc
+  endif
 endif
 
 # tweak flags for 32-bit build on 64-bit system

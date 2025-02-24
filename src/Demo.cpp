@@ -31,8 +31,13 @@
 #ifdef WIN32
   #include <windows.h>
 #endif
-#include <SDL/SDL.h>
-#include <GL/gl.h>
+#if defined(__APPLE__)
+  #include <SDL.h>
+  #include <OpenGL/gl.h>
+#else
+  #include <SDL/SDL.h>
+  #include <GL/gl.h>
+#endif
 #include <stdlib.h>
 #include <string.h>
 #include <math.h>
@@ -336,7 +341,8 @@ void CDemo::SetupProcessEvent(SDL_Event *pEvent)
           {
           bool bFullScreen = m_pSettings->GetFullscreen();
           int iWidth = m_pSettings->GetScreenWidth();
-          if (iWidth == 1600) m_pSettings->SetScreen(1400, 1050, bFullScreen);
+          if (iWidth == 3840) m_pSettings->SetScreen(1600, 1200, bFullScreen);
+          else if (iWidth == 1600) m_pSettings->SetScreen(1400, 1050, bFullScreen);
           else if (iWidth == 1400) m_pSettings->SetScreen(1280, 1024, bFullScreen);
           else if (iWidth == 1280) m_pSettings->SetScreen(1152, 864, bFullScreen);
           else if (iWidth == 1152) m_pSettings->SetScreen(1024, 768, bFullScreen);
@@ -365,7 +371,8 @@ void CDemo::SetupProcessEvent(SDL_Event *pEvent)
           else if (iWidth == 1024) m_pSettings->SetScreen(1152, 864, bFullScreen);
           else if (iWidth == 1152) m_pSettings->SetScreen(1280, 1024, bFullScreen);
           else if (iWidth == 1280) m_pSettings->SetScreen(1400, 1050, bFullScreen);
-          else m_pSettings->SetScreen(1600, 1200, bFullScreen);
+          else if (iWidth == 1400) m_pSettings->SetScreen(1600, 1200, bFullScreen);
+          else m_pSettings->SetScreen(3840, 2160, bFullScreen);
           }
         else if (m_iHiControl == E_INPUT_LAST_COMMAND + 2)
           {

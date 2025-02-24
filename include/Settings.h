@@ -23,7 +23,11 @@
 #if !defined(SETTINGS_H)
 #define SETTINGS_H
 
-#include <SDL/SDL.h>
+#if defined(__APPLE__)
+  #include <SDL.h>
+#else
+  #include <SDL/SDL.h>
+#endif
 
 // input command types
 typedef enum {E_INPUT_LEFT = 0,

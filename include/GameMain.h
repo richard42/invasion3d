@@ -23,7 +23,11 @@
 #if !defined(GAMEMAIN_H)
 #define GAMEMAIN_H
 
-#include "SDL/SDL.h"
+#if defined(__APPLE__)
+  #include <SDL.h>
+#else
+  #include <SDL/SDL.h>
+#endif
 #include <string.h>
 #include "Settings.h"
 
