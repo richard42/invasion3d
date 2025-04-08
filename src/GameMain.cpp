@@ -456,6 +456,9 @@ bool CGameMain::InitSDL(void)
     // set window name
     SDL_WM_SetCaption("Invasion 3D! An OpenGL game", "Invasion3D");
 
+    // disable mouse cursor
+    SDL_ShowCursor(SDL_DISABLE);
+
     return true;
 }
 
