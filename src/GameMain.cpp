@@ -85,7 +85,7 @@ int main(int argc, char *argv[])
 #endif
 
   printf("Invasion3D v%s\n", INVASION3D_VERSION);
-  printf("Copyright (C) 2005,2011 Richard Goedeken\n");
+  printf("Copyright (C) 2005-2025 Richard Goedeken\n");
 
   // initialize SDL and video mode
   if (!cTheApp.InitSDL())
@@ -168,7 +168,9 @@ void CGameMain::MainLoop(void)
 
   // get start time
   unsigned int uiNextFrame = uiTimeStart;
+#if defined(GL_PROFILE)
   unsigned int uiFramesSkipped = 0;
+#endif
 
   // main loop for the Invasion3D game
   while (m_eGameMode != E_QUIT)

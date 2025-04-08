@@ -337,6 +337,8 @@ void CParticles::ProcessState(unsigned int uiFrameTime)
 #if !defined(NO_SSE)
     asmParticleQuadSSE(uiTotalQuads, pfQuadVertex, pfQuadCenter, pfVelocity, psPoly->pucQuadRot, fSinCos, fCosSin, uiFrameTime);
 #else
+    (void) fSinCos[0][0];  // just to eliminate compiler warning
+    (void) fCosSin[0][0];
     for (unsigned int uiQuad = 0; uiQuad < uiTotalQuads; uiQuad++)
       {
       float fVelX = pfVelocity[0] * (float) uiFrameTime;

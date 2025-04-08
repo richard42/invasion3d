@@ -51,7 +51,7 @@ CIgnignokt::CIgnignokt()
 
   float fX0, fY0;
   float fZ0 = (float) -m_ciThickness / 2.0f;
-  float fZ1 = (float) m_ciThickness / 2.0f;
+  //float fZ1 = (float) m_ciThickness / 2.0f;
 
   // build ribbon around body
   ZRibbonStart(-75.0,-72.5f,0.0f, (float) m_ciThickness);
