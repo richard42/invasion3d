@@ -74,18 +74,21 @@ public:
   bool     GetFullscreen() const;
   int      GetScreenWidth() const;
   int      GetScreenHeight() const;
+  int      GetStereoOffset() const;
 
   // public modifiers
   bool LoadFromFile(void);
   bool Change(ECommand eCommand, SDLKey sKeySymbol);
   bool Change(ECommand eCommand, int iJoystick, bool bAxis, int iIndex, bool bPositive);
   bool SetScreen(int iWidth, int iHeight, bool bFullscreen);
+  bool SetStereoOffset(int iOffset);
   bool InsertHighScore(int iScore, char *pchName);
 
 private:
   // private member data
   int  m_iScreenWidth;
   int  m_iScreenHeight;
+  int  m_iStereoOffset;
   bool m_bFullscreen;
 
   // private functions

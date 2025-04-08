@@ -56,6 +56,7 @@ CSettings::CSettings()
   SetDefaults();
   m_iScreenWidth  = 800;
   m_iScreenHeight = 600;
+  m_iStereoOffset = 0;
   m_bFullscreen   = false;
 }
 
@@ -100,7 +101,8 @@ bool CSettings::SaveToFile(void) const
     }
 
   // dump out the screen settings
-  fprintf(fOut, "Screen_Full = %i\nScreen_Width = %i\nScreen_Height = %i\n", m_bFullscreen, m_iScreenWidth, m_iScreenHeight);
+  fprintf(fOut, "Screen_Full = %i\nScreen_Width = %i\nScreen_Height = %i\nStereo_Offset = %i\n",
+          m_bFullscreen, m_iScreenWidth, m_iScreenHeight, m_iStereoOffset);
 
   // dump out the high score list
   for (int iScore = 0; iScore < 10; iScore++)
@@ -211,6 +213,15 @@ int CSettings::GetScreenWidth() const
 int CSettings::GetScreenHeight() const
 {
   return m_iScreenHeight;
+}
+
+int CSettings::GetStereoOffset() const
+{
+#if defined(STEREO_3D)
+  return m_iStereoOffset;
+#else
+  return 0;
+#endif
 }
 
 /////////////////////////////////////////////////////////////////////////////
@@ -361,6 +372,16 @@ bool CSettings::LoadFromFile(void)
       int iHeight = atoi(pch);
       if (iHeight != 0) m_iScreenHeight = iHeight;
       }
+    else if (strncmp(pch, "Stereo_Offset", 13) == 0)
+      {
+      pch += 13;
+      // skip white space and equals
+      while (*pch == ' ' || *pch == '\t') pch++;
+      while (*pch == '=') pch++;
+      while (*pch == ' ' || *pch == '\t') pch++;
+      int iOffset = atoi(pch);
+      m_iStereoOffset = iOffset;
+      }
     else if (strncmp(pch, "Score_\"", 7) == 0)
       {
       pch += 7;
@@ -446,6 +467,12 @@ bool CSettings::SetScreen(int iWidth, int iHeight, bool bFullscreen)
   m_iScreenWidth = iWidth;
   m_iScreenHeight = iHeight;
   m_bFullscreen = bFullscreen;
+  return true;
+}
+
+bool CSettings::SetStereoOffset(int iOffset)
+{
+  m_iStereoOffset = iOffset;
   return true;
 }
 

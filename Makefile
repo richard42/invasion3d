@@ -165,6 +165,9 @@ endif
 ifeq ($(NO_ASM),1)
   CFLAGS += -DNO_SSE -DNO_MMX
 endif
+ifeq ($(GL_STEREO),1)
+  CFLAGS += -DSTEREO_3D
+endif
 ifeq ($(GL_PROFILE),1)
   CFLAGS += -DGL_PROFILE
 endif
@@ -230,6 +233,7 @@ targets:
 	@echo "  Options:"
 	@echo "    NO_ASM=1       == disable MMX assembly language optimizations"
 	@echo "    GL_PROFILE=1   == enable OpenGL render profiling"
+	@echo "    GL_STEREO=1    == support quad-buffered OpenGL stereo rendering"
 	@echo "    BITS=32        == build 32-bit binary on 64-bit machine"
 	@echo "    V=1            == display full commands when compiling"
 	@echo "  Install Options:"

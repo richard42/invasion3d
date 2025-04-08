@@ -333,7 +333,11 @@ void CDemo::SetupProcessEvent(SDL_Event *pEvent)
         if (m_iHiControl > 0) m_iHiControl--;
         break;
       case SDLK_DOWN:
+#if defined(STEREO_3D)
+        if (m_iHiControl < E_INPUT_LAST_COMMAND + 3) m_iHiControl++;
+#else
         if (m_iHiControl < E_INPUT_LAST_COMMAND + 2) m_iHiControl++;
+#endif
         if (m_iHiControl > E_INPUT_LAST_COMMAND) m_iColumn = 1;
         break;
       case SDLK_LEFT:
@@ -354,6 +358,11 @@ void CDemo::SetupProcessEvent(SDL_Event *pEvent)
         else if (m_iHiControl == E_INPUT_LAST_COMMAND + 2)
           {
           m_pSettings->SetScreen(m_pSettings->GetScreenWidth(), m_pSettings->GetScreenHeight(), !m_pSettings->GetFullscreen());
+          break;
+          }
+        else if (m_iHiControl == E_INPUT_LAST_COMMAND + 3)
+          {
+          m_pSettings->SetStereoOffset(m_pSettings->GetStereoOffset() - 5);
           break;
           }
       case SDLK_RIGHT:
@@ -377,6 +386,11 @@ void CDemo::SetupProcessEvent(SDL_Event *pEvent)
         else if (m_iHiControl == E_INPUT_LAST_COMMAND + 2)
           {
           m_pSettings->SetScreen(m_pSettings->GetScreenWidth(), m_pSettings->GetScreenHeight(), !m_pSettings->GetFullscreen());
+          }
+        else if (m_iHiControl == E_INPUT_LAST_COMMAND + 3)
+          {
+          m_pSettings->SetStereoOffset(m_pSettings->GetStereoOffset() + 5);
+          break;
           }
         break;
       default:
@@ -606,6 +620,9 @@ void CDemo::DrawSetupScreen(void) const
     pch += strlen(pch);
     }
   strcat(chCommands, "Resolution\nFullscreen");
+#if defined(STEREO_3D)
+  strcat(chCommands, "\n3D Stereo Offset");
+#endif
 
   // format and draw the command names
   cText.SetAlpha(true);
@@ -662,6 +679,10 @@ void CDemo::DrawSetupScreen(void) const
     sprintf(pch, "< %i x %i >\n< ON >", m_pSettings->GetScreenWidth(), m_pSettings->GetScreenHeight());
   else
     sprintf(pch, "< %i x %i >\n< OFF >", m_pSettings->GetScreenWidth(), m_pSettings->GetScreenHeight());
+#if defined(STEREO_3D)
+  pch += strlen(pch);
+  sprintf(pch, "\n< %i >", m_pSettings->GetStereoOffset());
+#endif
 
   // format and draw the joystick commands
   cText.SetColor(255, 255, 192);
@@ -673,7 +694,7 @@ void CDemo::DrawSetupScreen(void) const
   // draw instructions
   cText.SetColor(160, 160, 255);
   cText.SetJustification(E_CENTER);
-  cText.SetPosition(0.0f, 300.0f, -60.0f);
+  cText.SetPosition(0.0f, 320.0f, -60.0f);
   cText.SetText("Use the arrow keys and <Enter> to change values.\nPress <Escape> when done.");
   cText.Draw();
 
