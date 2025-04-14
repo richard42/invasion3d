@@ -253,6 +253,7 @@ void CDemo::ProcessEvents(void)
             // save existing screen parameters
             m_bPreviousFullscreen = m_pSettings->GetFullscreen();
             m_iPreviousScreenWidth = m_pSettings->GetScreenWidth();
+            m_iPreviousStereoOffset = m_pSettings->GetStereoOffset();
             }
           break;
         case SDL_QUIT:
@@ -320,7 +321,7 @@ void CDemo::SetupProcessEvent(SDL_Event *pEvent)
         // save the settings
         m_pSettings->SaveToFile();
         // if screen settings have changed, alert the GameMain
-        if (m_pSettings->GetFullscreen() != m_bPreviousFullscreen || m_pSettings->GetScreenWidth() != m_iPreviousScreenWidth)
+        if (m_pSettings->GetFullscreen() != m_bPreviousFullscreen || m_pSettings->GetScreenWidth() != m_iPreviousScreenWidth || (m_iPreviousStereoOffset == 0) != (m_pSettings->GetStereoOffset() == 0))
           {
           if (!m_pGameMain->ChangeScreen()) m_pGameMain->SetMode(E_QUIT);
           }
@@ -362,7 +363,7 @@ void CDemo::SetupProcessEvent(SDL_Event *pEvent)
           }
         else if (m_iHiControl == E_INPUT_LAST_COMMAND + 3)
           {
-          m_pSettings->SetStereoOffset(m_pSettings->GetStereoOffset() - 5);
+          m_pSettings->SetStereoOffset(m_pSettings->GetStereoOffset() - 1);
           break;
           }
       case SDLK_RIGHT:
@@ -389,7 +390,7 @@ void CDemo::SetupProcessEvent(SDL_Event *pEvent)
           }
         else if (m_iHiControl == E_INPUT_LAST_COMMAND + 3)
           {
-          m_pSettings->SetStereoOffset(m_pSettings->GetStereoOffset() + 5);
+          m_pSettings->SetStereoOffset(m_pSettings->GetStereoOffset() + 1);
           break;
           }
         break;

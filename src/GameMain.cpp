@@ -209,7 +209,9 @@ void CGameMain::MainLoop(void)
     profile.uiFrameTimeMS = 10;
     profile.uiTimeProcess  = SDL_GetTicks();
 #endif
+
     DrawFrame(profile);
+
 #if defined(GL_PROFILE)
     // if we skipped a frame on the last redraw, paint a red box in the top left corner on this frame
     if (uiFramesSkipped > 0)
@@ -269,16 +271,6 @@ void CGameMain::SetMode(EGameMode eMode)
   else if (eMode == E_GAMERUN)
     m_pcGameLogic->Initialize(this, &m_cSettings, m_pcSound);
 
-  // if the previous mode was Intro, re-set the projection matrix to have a smaller depth of
-  // field so that things will look OK with a 16-bit Z buffer
-  if (m_eGameMode == E_INTRO)
-    {
-    glMatrixMode(GL_PROJECTION);
-    glLoadIdentity();
-    gluPerspective(30.0, 4.0/3.0, 1400.0, 1800.0);
-    glHint(GL_PERSPECTIVE_CORRECTION_HINT, GL_NICEST);
-    }
-
 #if defined(GL_PROFILE)
   const char *pccModes[4] = { "Intro", "Demo", "Running", "Quitting" };
   printf("Switching game mode to: %s\n", pccModes[eMode]);
@@ -301,64 +293,98 @@ void CGameMain::SetBulletTime(bool bActive)
 /////////////////////////////////////////////////////////////////////////////
 // CGameMain class lower-level private functions
 
+void CGameMain::SetupTransforms(const bool bUseStereo, const int iEye)
+{
+  // setup rendering parameters
+  const float fAspectRatio = (float) m_cSettings.GetScreenWidth() / m_cSettings.GetScreenHeight();
+  const float fCameraAngle = 30.0f / 57.29577951f;
+  const float fCameraX = 0;
+  const float fCameraY = (m_eGameMode == E_INTRO) ? 0 : 100;
+  const float fCameraZ = -1600;
+  const float fCameraNear = (m_eGameMode == E_INTRO) ? 50 : 800;
+  const float fCameraFar = 3200;
+  const float fCameraZeroPlx = 1600 - m_cSettings.GetStereoOffset() * 50;
+  const float fHalfNearHeight = fCameraNear * tanf(fCameraAngle / 2.0f);
+  const float fEyeSep = 210; // fCameraZeroPlx / 30.0f;
+  const float fFrustumOffset = (0.5f * fEyeSep * fCameraNear / fCameraZeroPlx) * (iEye == 0 ? 1 : -1);
+  const float fEyeOffset = bUseStereo ? (fEyeSep * (iEye == 0 ? -0.5f : 0.5f)) : 0;
+
+  // setup the projection matrix
+  glMatrixMode(GL_PROJECTION);
+  glLoadIdentity();
+  const float fLeft = -fAspectRatio*fHalfNearHeight;
+  const float fRight = fAspectRatio*fHalfNearHeight;
+  const float fBottom = -fHalfNearHeight;
+  const float fTop = fHalfNearHeight;
+  if (bUseStereo)
+    glFrustum(fLeft + fFrustumOffset, fRight + fFrustumOffset, fBottom, fTop, fCameraNear, fCameraFar);
+  else
+    glFrustum(fLeft, fRight, fBottom, fTop, fCameraNear, fCameraFar);
+
+  // set up the model coordinate system
+  glMatrixMode(GL_MODELVIEW);
+  glLoadIdentity();
+  gluLookAt(fCameraX+fEyeOffset,fCameraY,fCameraZ, fEyeOffset,50,0, 0,-1,0);
+}
+
 void CGameMain::DrawFrame(GLProfile &profile)
 {
-  // Clear the color and depth buffers
-  glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+#if defined(GL_STEREO)
+  const bool bUseStereo = (m_cSettings.GetStereoOffset() != 0);
+#else
+  const bool bUseStereo = false;
+#endif
+  const int iNumEyes = (bUseStereo ? 2 : 1);
+
+  for (int iEye = 0; iEye < iNumEyes; iEye++)
+    {
+    // set frame buffer into which we will render
+    glDrawBuffer(bUseStereo ? ((iEye == 0) ? GL_BACK_LEFT : GL_BACK_RIGHT) : GL_BACK);
+
+    // Clear the color and depth buffers
+    glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 #if defined(GL_PROFILE)
-  profile.uiTimeClear = SDL_GetTicks();
+    profile.uiTimeClear = SDL_GetTicks();
 #endif
 
-  switch (m_eGameMode)
-    {
-    case E_INTRO:
-      // setup the coordinate system
-      glMatrixMode(GL_MODELVIEW);
-      glLoadIdentity();
-      gluLookAt(0,0,-1600, 0,50,0, 0,-1,0);
-      // draw the intro
-      m_pcIntro->Draw();
-      break;
-    case E_DEMO:
-      {
-      // setup the coordinate system
-      glMatrixMode(GL_MODELVIEW);
-      glLoadIdentity();
-      gluLookAt(0,100,-1600.0f, 0,50,0, 0,-1,0);
-      // draw the demo screen
-      m_pcDemo->Draw();
-      // fade from black
-      if (m_uiModeTime <= 1000)
-        {
-        glDisable(GL_LIGHTING);
-        glEnable(GL_BLEND);
-        glBlendFunc(GL_SRC_ALPHA,GL_ONE_MINUS_SRC_ALPHA);
-        glBegin(GL_QUADS);
-        glColor4f(0, 0, 0, (1000 - m_uiModeTime) / 1000.0f);
-        glVertex3f(-512.0f, -512.0f, -55.0f);
-        glVertex3f(-512.0f,  512.0f, -55.0f);
-        glVertex3f( 512.0f,  512.0f, -55.0f);
-        glVertex3f( 512.0f, -512.0f, -55.0f);
-        glEnd();
-        glEnable(GL_LIGHTING);
-        }
-      break;
-      }
-    case E_GAMERUN:
-    {
-      // setup the coordinate system
-      glMatrixMode(GL_MODELVIEW);
-      glLoadIdentity();
-      gluLookAt(0,100,-1600, 0,50,0, 0,-1,0);
+    // setup the model and projection matrices
+    SetupTransforms(bUseStereo, iEye);
 #if defined(GL_PROFILE)
-      profile.uiTimeSetup = SDL_GetTicks();
+    profile.uiTimeSetup = SDL_GetTicks();
 #endif
-      // draw the gameplay screen
-      m_pcGameLogic->Draw(profile);
-      break;
-    }
-    default:
-      break;
+
+    switch (m_eGameMode)
+      {
+      case E_INTRO:
+        // draw the intro
+        m_pcIntro->Draw();
+        break;
+      case E_DEMO:
+        // draw the demo screen
+        m_pcDemo->Draw();
+        // fade from black
+        if (m_uiModeTime <= 1000)
+          {
+          glDisable(GL_LIGHTING);
+          glEnable(GL_BLEND);
+          glBlendFunc(GL_SRC_ALPHA,GL_ONE_MINUS_SRC_ALPHA);
+          glBegin(GL_QUADS);
+          glColor4f(0, 0, 0, (1000 - m_uiModeTime) / 1000.0f);
+          glVertex3f(-512.0f, -512.0f, -55.0f);
+          glVertex3f(-512.0f,  512.0f, -55.0f);
+          glVertex3f( 512.0f,  512.0f, -55.0f);
+          glVertex3f( 512.0f, -512.0f, -55.0f);
+          glEnd();
+          glEnable(GL_LIGHTING);
+          }
+        break;
+      case E_GAMERUN:
+        // draw the gameplay screen
+        m_pcGameLogic->Draw(profile);
+        break;
+      default:
+        break;
+      }
     }
 }
 
@@ -428,6 +454,10 @@ bool CGameMain::InitSDL(void)
     SDL_GL_SetAttribute(SDL_GL_BLUE_SIZE, 5);     // at least 5 bits of blue
     SDL_GL_SetAttribute(SDL_GL_DEPTH_SIZE, 16);   // at least 16 bit screen depth
     SDL_GL_SetAttribute(SDL_GL_DOUBLEBUFFER, 1);  // use double-buffered screen
+#if defined(STEREO_3D)
+  if (m_cSettings.GetStereoOffset() != 0)
+    SDL_GL_SetAttribute(SDL_GL_STEREO, 1);      // quad-buffered stereo
+#endif
 
     iFlags = SDL_OPENGL;
     if (m_bFullscreen)
@@ -647,6 +677,10 @@ bool CGameMain::ChangeScreen(void)
   SDL_GL_SetAttribute(SDL_GL_BLUE_SIZE, 5);     // at least 5 bits of blue
   SDL_GL_SetAttribute(SDL_GL_DEPTH_SIZE, 16);   // at least 16 bit screen depth
   SDL_GL_SetAttribute(SDL_GL_DOUBLEBUFFER, 1);  // use double-buffered screen
+#if defined(STEREO_3D)
+  if (m_cSettings.GetStereoOffset() != 0)
+    SDL_GL_SetAttribute(SDL_GL_STEREO, 1);      // quad-buffered stereo
+#endif
 
   iFlags = SDL_OPENGL;
   if (m_bFullscreen)
@@ -674,6 +708,9 @@ bool CGameMain::ChangeScreen(void)
 
   // set window name
   SDL_WM_SetCaption("Invasion 3D! An OpenGL game", "Invasion3D");
+
+  // disable mouse cursor
+  SDL_ShowCursor(SDL_DISABLE);
 
   // re-start OpenGL
   if (!InitGL()) return false;

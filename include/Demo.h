@@ -83,6 +83,7 @@ private:
   bool       m_bWaitingForCommand;
   bool       m_bPreviousFullscreen;
   int        m_iPreviousScreenWidth;
+  int        m_iPreviousStereoOffset;
   // data for Help Screen
   bool       m_bHelpScreen;
   // data for High Scores

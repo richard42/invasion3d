@@ -90,6 +90,7 @@ public:
 
 private:
   // main sub-functions
+  void SetupTransforms(const bool bUseStereo, const int iEye);
   void DrawFrame(GLProfile &profile);
 
   // SDL joystick pointers
