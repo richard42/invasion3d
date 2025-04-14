@@ -1851,6 +1851,8 @@ void CGameLogic::ProcessCollisions(void)
           {
           // play invader impact sound
           m_pSound->PlaySoundClip(E_SOUND_HIT_4);
+          // increment the hit counter
+          m_iHitCounter++;
           // they hit each other - test for death of first invader
           if (!m_pcInvader[uiInvader1]->Alive())
             {
