@@ -64,6 +64,7 @@
 // static CGameMain class members
 bool CGameMain::m_bAlphaSupported = false;
 bool CGameMain::m_bUseLuminance   = false;
+bool CGameMain::m_bSwapStereoEyes = false;
 
 /*  The main() function */
 int main(int argc, char *argv[])
@@ -86,6 +87,13 @@ int main(int argc, char *argv[])
 
   printf("Invasion3D v%s\n", INVASION3D_VERSION);
   printf("Copyright (C) 2005-2025 Richard Goedeken\n");
+
+  // parse command line options
+  for (int i = 1; i < argc; i++)
+    {
+    if (strcmp(argv[i], "--swap-eyes") == 0)
+      CGameMain::m_bSwapStereoEyes = true;
+    }
 
   // initialize SDL and video mode
   if (!cTheApp.InitSDL())
@@ -339,7 +347,14 @@ void CGameMain::DrawFrame(GLProfile &profile)
   for (int iEye = 0; iEye < iNumEyes; iEye++)
     {
     // set frame buffer into which we will render
-    glDrawBuffer(bUseStereo ? ((iEye == 0) ? GL_BACK_LEFT : GL_BACK_RIGHT) : GL_BACK);
+    if (bUseStereo)
+      {
+      glDrawBuffer((iEye == (m_bSwapStereoEyes ? 1 : 0)) ? GL_BACK_LEFT : GL_BACK_RIGHT);
+      }
+    else
+      {
+      glDrawBuffer(GL_BACK);
+      }
 
     // Clear the color and depth buffers
     glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);

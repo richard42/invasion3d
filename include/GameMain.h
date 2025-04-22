@@ -80,6 +80,7 @@ public:
   // public static data members
   static bool m_bAlphaSupported;
   static bool m_bUseLuminance;
+  static bool m_bSwapStereoEyes;
 
   // debug data and functions
 #if defined(_DEBUG)
