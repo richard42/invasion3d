@@ -65,6 +65,7 @@
 bool CGameMain::m_bAlphaSupported = false;
 bool CGameMain::m_bUseLuminance   = false;
 bool CGameMain::m_bSwapStereoEyes = false;
+bool CGameMain::m_bDisableStereo  = false;
 
 /*  The main() function */
 int main(int argc, char *argv[])
@@ -338,7 +339,7 @@ void CGameMain::SetupTransforms(const bool bUseStereo, const int iEye)
 void CGameMain::DrawFrame(GLProfile &profile)
 {
 #if defined(GL_STEREO)
-  const bool bUseStereo = (m_cSettings.GetStereoOffset() != 0);
+  const bool bUseStereo = (m_cSettings.GetStereoOffset() != 0) && !m_bDisableStereo;
 #else
   const bool bUseStereo = false;
 #endif

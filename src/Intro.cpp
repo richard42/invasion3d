@@ -207,6 +207,10 @@ void CIntro::ProcessEvents(void)
   // Grab all the events off the queue
   while (SDL_PollEvent(&event))
     {
+#if defined(STEREO_3D)
+        if (event.type == SDL_KEYDOWN && event.key.keysym.sym == SDLK_s && (event.key.keysym.mod & KMOD_CTRL))
+          CGameMain::m_bDisableStereo = !CGameMain::m_bDisableStereo;
+#endif
       // look for an escape key press
       if (event.type == SDL_KEYDOWN && event.key.keysym.sym == SDLK_ESCAPE)
         {

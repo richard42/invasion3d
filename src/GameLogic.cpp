@@ -574,6 +574,10 @@ void CGameLogic::ProcessEvents(void)
       ECommand eCmd = E_INPUT_NONE;
       if (event.type == SDL_KEYDOWN)
         {
+#if defined(STEREO_3D)
+        if (event.key.keysym.sym == SDLK_s && (event.key.keysym.mod & KMOD_CTRL))
+          CGameMain::m_bDisableStereo = !CGameMain::m_bDisableStereo;
+#endif
         eCmd = m_pSettings->GetCommand(event.key.keysym.sym);
         fValue = 1.0f;
         // set the MoveKey flag for this direction and clear the flag for the other direction

@@ -216,6 +216,10 @@ void CDemo::ProcessEvents(void)
       switch (event.type)
         {
         case SDL_KEYDOWN:
+#if defined(STEREO_3D)
+          if (event.key.keysym.sym == SDLK_s && (event.key.keysym.mod & KMOD_CTRL))
+            CGameMain::m_bDisableStereo = !CGameMain::m_bDisableStereo;
+#endif
           if (event.key.keysym.sym == SDLK_ESCAPE)
             {
             if (m_bHelpScreen)

@@ -81,6 +81,7 @@ public:
   static bool m_bAlphaSupported;
   static bool m_bUseLuminance;
   static bool m_bSwapStereoEyes;
+  static bool m_bDisableStereo;
 
   // debug data and functions
 #if defined(_DEBUG)
