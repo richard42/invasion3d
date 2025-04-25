@@ -81,7 +81,7 @@ ifeq ("$(UNAME)","IRIX64")
   CC = C99
   CXX = CC
   CFLAGS += -64 -mips4 -I/usr/freeware/include -DCPU_BIG_ENDIAN
-  LDFLAGS += -64 -IPA -L/usr/freeware/lib64 -lm -lpthread
+  LDFLAGS += -64 -IPA -L/usr/freeware/lib64 -lX11 -lm -lpthread
 endif
 ifeq ("$(CPU)","NONE")
   $(error CPU type "$(HOST_CPU)" not supported.  Please file bug report at 'http://code.google.com/p/invasion3d/issues')

@@ -37,6 +37,9 @@
   #include <GL/gl.h>
   #include <GL/glu.h>
 #endif
+#if defined(__mips)
+  #include <X11/Xlib.h>
+#endif
 
 #include <stdio.h>
 #include <stdlib.h>
@@ -181,6 +184,20 @@ void CGameMain::MainLoop(void)
   unsigned int uiFramesSkipped = 0;
 #endif
 
+    // disable the screensaver on SGI machines
+#if defined(__mips)
+    Display *pDisplay = XOpenDisplay(":0");
+    int iSSTimeout = 0, iSSInterval = 0, iSSBlanking = 0, iSSAllowExp = 0;
+    XGetScreenSaver(pDisplay, &iSSTimeout, &iSSInterval, &iSSBlanking, &iSSAllowExp);
+    //printf("Before: Display: %lx. Timeout=%i, Interval=%i, Blanking=%i, AllowExp=%i\n",
+    //       pDisplay, iSSTimeout, iSSInterval, iSSBlanking, iSSAllowExp);
+    XSetScreenSaver(pDisplay, 0, 0, 0, iSSAllowExp);
+    int iSSTimeout2 = 0, iSSInterval2 = 0, iSSBlanking2 = 0, iSSAllowExp2 = 0;
+    XGetScreenSaver(pDisplay, &iSSTimeout2, &iSSInterval2, &iSSBlanking2, &iSSAllowExp2);
+    //printf("After: Display: %lx. Timeout=%i, Interval=%i, Blanking=%i, AllowExp=%i\n",
+    //       pDisplay, iSSTimeout2, iSSInterval2, iSSBlanking2, iSSAllowExp2);
+#endif
+
   // main loop for the Invasion3D game
   while (m_eGameMode != E_QUIT)
     {
@@ -269,6 +286,14 @@ void CGameMain::MainLoop(void)
 #endif
     m_uiModeTime += uiFrameTime;
     }
+
+    // disable the screensaver on SGI machines
+#if defined(__mips)
+  XSetScreenSaver(pDisplay, iSSTimeout, iSSInterval, iSSBlanking, iSSAllowExp);
+  XGetScreenSaver(pDisplay, &iSSTimeout2, &iSSInterval2, &iSSBlanking2, &iSSAllowExp2);
+  XCloseDisplay(pDisplay);
+#endif
+
   return;
 }
 
