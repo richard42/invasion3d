@@ -41,6 +41,9 @@ endif
 ifeq ("$(UNAME)","IRIX64")
   OS = IRIX
 endif
+ifeq ("$(UNAME)","IRIX")
+  OS = IRIX
+endif
 ifneq ("$(filter GNU/kFreeBSD kfreebsd,$(UNAME))","")
   OS = LINUX
 endif
@@ -83,6 +86,15 @@ ifeq ("$(UNAME)","IRIX64")
   CFLAGS += -64 -mips4 -I/usr/freeware/include -DCPU_BIG_ENDIAN
   LDFLAGS += -64 -IPA -L/usr/freeware/lib64 -lX11 -lm -lpthread
 endif
+ifeq ("$(UNAME)","IRIX")
+  CPU := MIPS
+  ARCH_DETECTED := 32BITS
+  NO_ASM := 1
+  CC = c99
+  CXX = CC
+  CFLAGS += -n32 -mips4 -I/usr/freeware/include -DCPU_BIG_ENDIAN
+  LDFLAGS += -n32 -IPA -L/usr/freeware/lib32 -lX11 -lm -lpthread
+endif
 ifeq ("$(CPU)","NONE")
   $(error CPU type "$(HOST_CPU)" not supported.  Please file bug report at 'http://code.google.com/p/invasion3d/issues')
 endif
@@ -96,7 +108,7 @@ EXEPATH	= $(WKDPATH)/bin
 DATAPATH = $(WKDPATH)/data
 
 # optimization flags
-ifeq ("$(UNAME)","IRIX64")
+ifeq ("$(CPU)","MIPS")
   OPTFLAGS := -Ofast -OPT:olimit=0:roundoff=3 -TARG:platform=IP30:proc=r10000
 else
   ifeq ("$(UNAME)","Darwin")
