@@ -93,7 +93,7 @@ ifeq ("$(UNAME)","IRIX")
   CC = c99
   CXX = CC
   CFLAGS += -n32 -mips4 -I/usr/freeware/include -DCPU_BIG_ENDIAN
-  LDFLAGS += -n32 -IPA -L/usr/freeware/lib32 -lX11 -lm -lpthread
+  LDFLAGS += -n32 -IPA -L/usr/freeware/lib32 -lX11 -lm -lpthread -rpath /usr/freeware/games/invasion3d
 endif
 ifeq ("$(CPU)","NONE")
   $(error CPU type "$(HOST_CPU)" not supported.  Please file bug report at 'http://code.google.com/p/invasion3d/issues')
