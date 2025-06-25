@@ -1,0 +1,38 @@
+package name:
+  fw_invasion3d.sw.eoe
+
+requried packages:
+  c++_eoe.sw.lib
+  compiler_eoe.sw.lib
+  eoe.sw.base
+  eoe.sw.gfx
+  dmedia_eoe.sw.audio
+  dmedia_eoe.sw.base
+  dmedia_eoe.sw.lib
+  x_eoe.sw.eoe
+
+versions long | grep libc.so.1
+
+Building:
+    gmake all MEDIADIR=/usr/freeware/games/invasion3d
+
+Tagging:
+    tag 0x42691001 ./invasion3d
+
+Icons:
+  /usr/lib/filetype/install/iconlib/fw_invasion3d.open.fti
+  /usr/lib/filetype/install/iconlib/fw_invasion3d.closed.fti
+
+FTR file:
+  /usr/lib/filetype/install/fw_invasion3d.ftr
+  cd /usr/lib/filetype
+  su
+  make -u
+
+Icon catalog:
+  cd /usr/lib/desktop/iconcatalog/pages/C/Freeware/
+  ln -s /usr/freeware/games/invasion3d/invasion3d Invasion3D
+
+Final package creation (after swpkg is built):
+  cd /usr/dist
+  tar -cvf /usr/people/pyro/fw_invasion3d-1.0.4a.tardist *

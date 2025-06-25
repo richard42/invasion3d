@@ -1,0 +1,12 @@
+f 0644 root sys usr/freeware/games/invasion3d/Invaders.dat usr/freeware/games/invasion3d/Invaders.dat fw_invasion3d.sw.eoe
+f 0644 root sys usr/freeware/games/invasion3d/LICENSE usr/freeware/games/invasion3d/LICENSE fw_invasion3d.opt.relnotes
+f 0644 root sys usr/freeware/games/invasion3d/README usr/freeware/games/invasion3d/README fw_invasion3d.opt.relnotes
+f 0644 root sys usr/freeware/games/invasion3d/RELEASE usr/freeware/games/invasion3d/RELEASE fw_invasion3d.opt.relnotes
+f 0755 root sys usr/freeware/games/invasion3d/invasion3d usr/freeware/games/invasion3d/invasion3d fw_invasion3d.sw.eoe
+f 0755 root sys usr/freeware/games/invasion3d/libSDL-1.2.so.1 usr/freeware/games/invasion3d/libSDL-1.2.so.1 fw_invasion3d.sw.eoe
+f 0755 root sys usr/freeware/games/invasion3d/libaa.so.2 usr/freeware/games/invasion3d/libaa.so.2 fw_invasion3d.sw.eoe
+f 0644 root sys usr/freeware/games/invasion3d/libnas.so.1 usr/freeware/games/invasion3d/libnas.so.1 fw_invasion3d.sw.eoe
+l 0755 root sys usr/lib/desktop/iconcatalog/pages/C/Freeware/Invasion3D usr/lib/desktop/iconcatalog/pages/C/Freeware/Invasion3D fw_invasion3d.sw.eoe symval(/usr/freeware/games/invasion3d/invasion3d.sh)
+f 0644 root sys usr/lib/filetype/install/fw_invasion3d.ftr usr/lib/filetype/install/fw_invasion3d.ftr fw_invasion3d.sw.eoe
+f 0644 root sys usr/lib/filetype/install/iconlib/fw_invasion3d.closed.fti usr/lib/filetype/install/iconlib/fw_invasion3d.closed.fti fw_invasion3d.sw.eoe
+f 0644 root sys usr/lib/filetype/install/iconlib/fw_invasion3d.open.fti usr/lib/filetype/install/iconlib/fw_invasion3d.open.fti fw_invasion3d.sw.eoe

@@ -1,0 +1,13 @@
+TYPE fw_invasion3d_Executable
+    MATCH       tag == 0x42691001;
+    LEGEND      Invasion3D Arcade Game
+    SUPERTYPE   Executable
+    CMD OPEN    /usr/freeware/games/invasion3d/invasion3d
+    CMD ALTOPEN launch -c /usr/freeware/games/invasion3d/invasion3d
+    ICON {
+        if (opened) {
+            include("iconlib/fw_invasion3d.open.fti");
+        } else {
+            include("iconlib/fw_invasion3d.closed.fti");
+        }
+    }
